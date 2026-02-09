@@ -10,7 +10,7 @@ import { Tab4Page } from './tab4.page';
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, 
     FormsModule,
     IonicModule,
     Tab4PageRoutingModule
