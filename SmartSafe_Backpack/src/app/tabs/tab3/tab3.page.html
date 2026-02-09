@@ -1,0 +1,208 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title class="toolbar-title">Mi Horario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="schedule-container">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">Horario de Clases</h1>
+      <p class="subtitle">Lunes a Viernes • 7:00 AM - 12:45 PM</p>
+    </div>
+
+    <!-- Horario Grid -->
+    <div class="schedule-grid">
+      <!-- Header Row -->
+      <div class="schedule-header time-col">Hora</div>
+      <div class="schedule-header">Lunes</div>
+      <div class="schedule-header">Martes</div>
+      <div class="schedule-header">Miércoles</div>
+      <div class="schedule-header">Jueves</div>
+      <div class="schedule-header">Viernes</div>
+
+      <!-- 7:00 - 7:40 -->
+      <div class="time-cell">7:00<br>7:40</div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell sociales">
+        <div class="subject-name">Estudios Sociales</div>
+      </div>
+
+      <!-- 7:40 - 8:20 -->
+      <div class="time-cell">7:40<br>8:20</div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell sociales">
+        <div class="subject-name">Estudios Sociales</div>
+      </div>
+
+      <!-- 8:20 - 9:00 -->
+      <div class="time-cell">8:20<br>9:00</div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+
+      <!-- 9:00 - 9:40 -->
+      <div class="time-cell">9:00<br>9:40</div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+
+      <!-- RECREO -->
+      <div class="time-cell recreo-time">9:40<br>10:05</div>
+      <div class="recreo-cell" colspan="5">
+        <ion-icon name="cafe-outline"></ion-icon>
+        <span>RECREO</span>
+      </div>
+      <div class="recreo-cell"></div>
+      <div class="recreo-cell"></div>
+      <div class="recreo-cell"></div>
+      <div class="recreo-cell"></div>
+
+      <!-- 10:05 - 10:45 -->
+      <div class="time-cell">10:05<br>10:45</div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell sociales">
+        <div class="subject-name">Estudios Sociales</div>
+      </div>
+      <div class="class-cell sociales">
+        <div class="subject-name">Estudios Sociales</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell orientacion">
+        <div class="subject-name">Orientación</div>
+      </div>
+
+      <!-- 10:45 - 11:25 -->
+      <div class="time-cell">10:45<br>11:25</div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell sociales">
+        <div class="subject-name">Estudios Sociales</div>
+      </div>
+      <div class="class-cell orientacion">
+        <div class="subject-name">Orientación</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+      <div class="class-cell religion">
+        <div class="subject-name">Religión</div>
+      </div>
+
+      <!-- 11:25 - 12:05 -->
+      <div class="time-cell">11:25<br>12:05</div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell ciencias">
+        <div class="subject-name">Ciencias Naturales</div>
+      </div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell religion">
+        <div class="subject-name">Religión</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+
+      <!-- 12:05 - 12:45 -->
+      <div class="time-cell">12:05<br>12:45</div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell religion">
+        <div class="subject-name">Religión</div>
+      </div>
+      <div class="class-cell ed-fisica">
+        <div class="subject-name">Educación Física</div>
+      </div>
+      <div class="class-cell lengua">
+        <div class="subject-name">Lengua y Literatura</div>
+      </div>
+      <div class="class-cell matematicas">
+        <div class="subject-name">Matemáticas</div>
+      </div>
+    </div>
+
+    <!-- Cuadernos Olvidados Section -->
+    <div class="forgotten-section">
+      <div class="section-header">
+        <ion-icon name="scan-circle"></ion-icon>
+        <h3>Cuadernos Olvidados</h3>
+      </div>
+      
+      <!-- Empty state -->
+      <div class="empty-state">
+        <ion-icon name="hourglass-outline"></ion-icon>
+        <p>Esperando ingreso de cuadernos...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Background Effects -->
+  <div class="background-effects">
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+  </div>
+</ion-content>

@@ -1,0 +1,366 @@
+/* Toolbar */
+.custom-toolbar {
+  --background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+  --color: white;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.toolbar-title {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Content */
+ion-content {
+  --background: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1b2e 100%);
+  position: relative;
+}
+
+.notifications-container {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 40px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.main-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 8px 0 0 0;
+  font-weight: 400;
+}
+
+/* Section Title */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  animation: fadeInLeft 0.6s ease-out;
+}
+
+.section-title ion-icon {
+  font-size: 24px;
+  color: #00d4ff;
+}
+
+.section-title h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+/* Notifications List */
+.notifications-list {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+ion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --min-height: auto;
+  margin-bottom: 16px;
+}
+
+.notification-item {
+  --background: transparent;
+}
+
+ion-item-sliding {
+  margin-bottom: 16px;
+}
+
+/* Animación de eliminación */
+ion-item-sliding.deleting {
+  animation: slideOut 0.3s ease-out forwards;
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Botón de eliminar */
+ion-item-option {
+  --background: linear-gradient(135deg, #ff6464 0%, #ff4444 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+ion-item-option ion-icon {
+  font-size: 24px;
+  color: white;
+}
+
+/* Notification Card */
+.notification-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.notification-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.notification-card.warning::before {
+  background: linear-gradient(180deg, #ffaa00 0%, #ff8800 100%);
+}
+
+.notification-card.alert::before {
+  background: linear-gradient(180deg, #ff6464 0%, #ff4444 100%);
+}
+
+.notification-card.info::before {
+  background: linear-gradient(180deg, #00d4ff 0%, #0099ff 100%);
+}
+
+.notification-card.success::before {
+  background: linear-gradient(180deg, #00ff88 0%, #00cc66 100%);
+}
+
+.notification-card:active {
+  transform: scale(0.98);
+}
+
+/* Notification Icon */
+.notification-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification-icon ion-icon {
+  font-size: 28px;
+}
+
+.temperature-icon {
+  background: rgba(255, 170, 0, 0.15);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+}
+
+.temperature-icon ion-icon {
+  color: #ffaa00;
+}
+
+.weight-icon {
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+}
+
+.weight-icon ion-icon {
+  color: #ff6464;
+}
+
+.gps-icon {
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.gps-icon ion-icon {
+  color: #00d4ff;
+}
+
+.book-icon {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.book-icon ion-icon {
+  color: #a855f7;
+}
+
+.success-icon {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.success-icon ion-icon {
+  color: #00ff88;
+}
+
+/* Notification Content */
+.notification-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.notification-message {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.notification-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.notification-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-time ion-icon {
+  font-size: 14px;
+}
+
+.notification-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(255, 170, 0, 0.2);
+  color: #ffaa00;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.alert-badge {
+  background: rgba(255, 100, 100, 0.2);
+  color: #ff6464;
+}
+
+.info-badge {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+}
+
+.success-badge {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+/* Background Effects */
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+  animation: float 8s ease-in-out infinite;
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 250px;
+  height: 250px;
+  bottom: -80px;
+  left: -80px;
+  animation-delay: 3s;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-30px) scale(1.1);
+    opacity: 0.25;
+  }
+}

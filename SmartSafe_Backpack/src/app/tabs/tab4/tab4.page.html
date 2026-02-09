@@ -1,0 +1,189 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title class="toolbar-title">Alertas y Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="notifications-container">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">Centro de Notificaciones</h1>
+      <p class="subtitle">Alertas y recomendaciones inteligentes</p>
+    </div>
+
+    <!-- Notificaciones Recientes -->
+    <div class="section-title">
+      <ion-icon name="notifications"></ion-icon>
+      <h3>Notificaciones Recientes</h3>
+    </div>
+
+    <!-- Lista de Notificaciones con Swipe -->
+    <ion-list class="notifications-list">
+      
+      <!-- Notificación 1: Temperatura Alta -->
+      <ion-item-sliding #sliding1>
+        <ion-item lines="none" class="notification-item">
+          <div class="notification-card warning">
+            <div class="notification-icon temperature-icon">
+              <ion-icon name="thermometer"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">Temperatura elevada detectada</h3>
+              <p class="notification-message">
+                La temperatura actual es de 28°C. Se recomienda aplicar protector solar.
+              </p>
+              <div class="notification-footer">
+                <span class="notification-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Hace 5 minutos
+                </span>
+                <span class="notification-badge">Importante</span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteNotification(sliding1, $event)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      <!-- Notificación 2: Peso Excesivo -->
+      <ion-item-sliding #sliding2>
+        <ion-item lines="none" class="notification-item">
+          <div class="notification-card alert">
+            <div class="notification-icon weight-icon">
+              <ion-icon name="warning"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">Peso excesivo en la mochila</h3>
+              <p class="notification-message">
+                El peso actual (8.5 kg) supera el recomendado. Considera reducir la carga.
+              </p>
+              <div class="notification-footer">
+                <span class="notification-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Hace 15 minutos
+                </span>
+                <span class="notification-badge alert-badge">Alerta</span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteNotification(sliding2, $event)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      <!-- Notificación 3: GPS Activo -->
+      <ion-item-sliding #sliding3>
+        <ion-item lines="none" class="notification-item">
+          <div class="notification-card info">
+            <div class="notification-icon gps-icon">
+              <ion-icon name="location"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">Ubicación actualizada</h3>
+              <p class="notification-message">
+                Tu mochila está en: Universidad de Cuenca, Campus Central.
+              </p>
+              <div class="notification-footer">
+                <span class="notification-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Hace 1 hora
+                </span>
+                <span class="notification-badge info-badge">Info</span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteNotification(sliding3, $event)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      <!-- Notificación 4: Cuaderno Olvidado -->
+      <ion-item-sliding #sliding4>
+        <ion-item lines="none" class="notification-item">
+          <div class="notification-card warning">
+            <div class="notification-icon book-icon">
+              <ion-icon name="book"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">Cuaderno olvidado detectado</h3>
+              <p class="notification-message">
+                Falta el cuaderno de Matemáticas según tu horario de mañana.
+              </p>
+              <div class="notification-footer">
+                <span class="notification-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Hace 2 horas
+                </span>
+                <span class="notification-badge">Recordatorio</span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteNotification(sliding4, $event)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+      <!-- Notificación 5: Sistema OK -->
+      <ion-item-sliding #sliding5>
+        <ion-item lines="none" class="notification-item">
+          <div class="notification-card success">
+            <div class="notification-icon success-icon">
+              <ion-icon name="checkmark-circle"></ion-icon>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">Todos los sistemas operativos</h3>
+              <p class="notification-message">
+                Sensores funcionando correctamente. GPS activo. Mochila conectada.
+              </p>
+              <div class="notification-footer">
+                <span class="notification-time">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Hace 3 horas
+                </span>
+                <span class="notification-badge success-badge">OK</span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+        
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="deleteNotification(sliding5, $event)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+
+    </ion-list>
+
+  </div>
+
+  <!-- Background Effects -->
+  <div class="background-effects">
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+  </div>
+</ion-content>

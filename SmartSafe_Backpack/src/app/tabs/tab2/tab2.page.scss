@@ -1,0 +1,396 @@
+/* Toolbar */
+.custom-toolbar {
+  --background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+  --color: white;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.toolbar-title {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Icono de perfil */
+.profile-icon {
+  font-size: 32px !important;
+  color: #00d4ff;
+}
+
+/* Content */
+ion-content {
+  --background: linear-gradient(135deg, #0a1628 0%, #0f1b2e 50%, #1a2332 100%);
+}
+
+.map-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* GPS Status Bar */
+.gps-status-bar {
+  position: absolute;
+  top: 20px;
+  left: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideDown 0.6s ease-out;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* 🔥 Estado inactivo */
+.gps-status-bar.status-inactive {
+  border-color: rgba(255, 100, 100, 0.3);
+  background: rgba(255, 100, 100, 0.05);
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gps-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gps-indicator ion-icon {
+  font-size: 22px;
+  color: #00ff88;
+  animation: rotate-pulse 3s ease-in-out infinite;
+}
+
+.status-inactive .gps-indicator ion-icon {
+  color: #ff6464;
+  animation: none;
+}
+
+@keyframes rotate-pulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+}
+
+.gps-indicator span {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.signal-strength {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+}
+
+.signal-bar {
+  width: 4px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.signal-bar:nth-child(2) { height: 12px; }
+.signal-bar:nth-child(3) { height: 16px; }
+.signal-bar:nth-child(4) { height: 20px; }
+
+.signal-bar.active {
+  background: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+}
+
+.accuracy-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* 🔥 Badge inactivo */
+.accuracy-badge.badge-inactive {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+.accuracy-badge.badge-inactive ion-icon {
+  color: #ff6464;
+}
+
+.accuracy-badge.badge-inactive span {
+  color: #ff6464;
+}
+
+.accuracy-badge ion-icon {
+  font-size: 18px;
+  color: #00d4ff;
+}
+
+.accuracy-badge span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #00d4ff;
+}
+
+/* Map Area */
+.map-area {
+  position: absolute;
+  top: 100px;
+  left: 16px;
+  right: 16px;
+  bottom: 260px;
+  border-radius: 24px;
+  border: 2px solid rgba(0, 212, 255, 0.2);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.6s ease-out;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Location Info Card */
+.location-info-card {
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.6s ease-out 0.5s both;
+  transition: all 0.3s ease;
+}
+
+/* 🔥 Card inactiva */
+.location-info-card.card-inactive {
+  border-color: rgba(255, 100, 100, 0.3);
+  background: rgba(255, 100, 100, 0.03);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.card-header ion-icon {
+  font-size: 24px;
+  color: #00d4ff;
+}
+
+.card-inactive .card-header ion-icon {
+  color: #ff6464;
+}
+
+.card-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.coordinates-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 16px;
+}
+
+.coordinate-item {
+  text-align: center;
+  flex: 1;
+}
+
+.coordinate-item .label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px 0;
+}
+
+.coordinate-item .value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #00d4ff;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+}
+
+/* 🔥 Valor inactivo */
+.coordinate-item .value-inactive {
+  color: rgba(255, 100, 100, 0.6);
+}
+
+.coordinate-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(0, 212, 255, 0.3);
+}
+
+/* 🔥 Data Grid */
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.data-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+}
+
+.data-item ion-icon {
+  font-size: 20px;
+  color: #00d4ff;
+}
+
+.data-content {
+  flex: 1;
+}
+
+.data-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 2px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.update-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.update-info ion-icon {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 6px;
+}
+
+.update-info > span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  flex: 1;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 12px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.live-indicator span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #00ff88;
+  letter-spacing: 0.5px;
+}
+
+/* 🔥 Indicador Offline */
+.offline-indicator {
+  padding: 4px 10px;
+  background: rgba(255, 100, 100, 0.1);
+  border-radius: 12px;
+}
+
+.offline-indicator span {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff6464;
+  letter-spacing: 0.5px;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

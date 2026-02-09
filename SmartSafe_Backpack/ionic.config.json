@@ -1,0 +1,7 @@
+{
+  "name": "SmartSafe_Backpack",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

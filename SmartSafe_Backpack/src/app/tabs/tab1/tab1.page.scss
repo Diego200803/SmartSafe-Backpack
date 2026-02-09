@@ -1,0 +1,582 @@
+
+
+/* Toolbar personalizado */
+.custom-toolbar {
+  --background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+  --color: white;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.toolbar-title {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Content */
+ion-content {
+  --background: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1b2e 100%);
+  position: relative;
+}
+
+.home-container {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 80px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.main-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 8px 0 0 0;
+  font-weight: 400;
+}
+
+/* Status Card Principal */
+.status-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 30px 24px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out;
+  transition: all 0.3s ease;
+}
+
+.status-card.active {
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+}
+
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00d4ff 0%, #0099ff 100%);
+  opacity: 0.8;
+}
+
+/* Status Icon Container */
+.status-icon-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #00d4ff;
+  border-radius: 50%;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  opacity: 0;
+}
+
+.pulse-ring.delay-1 {
+  animation-delay: 0.5s;
+}
+
+.status-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+  position: relative;
+  z-index: 2;
+}
+
+.status-icon ion-icon {
+  font-size: 40px;
+  color: white;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Status Info */
+.status-info {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.status-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 6px 0;
+}
+
+.status-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 20px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+  box-shadow: 0 0 10px #00ff88;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.status-indicator span {
+  font-size: 13px;
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+/* Section Title */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  animation: fadeInLeft 0.6s ease-out;
+}
+
+.section-title ion-icon {
+  font-size: 24px;
+  color: #00d4ff;
+}
+
+.section-title h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+/* Data Cards Grid */
+.data-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.data-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 16px 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.data-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.data-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.data-card:hover::before {
+  opacity: 1;
+}
+
+/* Data Icon */
+.data-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 12px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.data-icon ion-icon {
+  font-size: 28px;
+  color: #00d4ff;
+}
+
+.data-icon.weight {
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.data-icon.temperature {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+.data-icon.temperature ion-icon {
+  color: #ff6464;
+}
+
+.data-icon.pressure {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.data-icon.pressure ion-icon {
+  color: #8b5cf6;
+}
+
+.data-icon.led-on {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.data-icon.led-on ion-icon {
+  color: #00ff88;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+  }
+}
+
+.data-icon.led-off {
+  background: rgba(100, 100, 100, 0.1);
+  border-color: rgba(100, 100, 100, 0.3);
+}
+
+.data-icon.led-off ion-icon {
+  color: #888;
+}
+
+/* Data Info */
+.data-info {
+  text-align: center;
+}
+
+.data-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.data-value span {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.data-value.status-text {
+  font-size: 18px;
+}
+
+/* Last Update */
+.last-update {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  animation: fadeIn 0.6s ease-out 0.4s both;
+}
+
+.last-update ion-icon {
+  font-size: 18px;
+  color: #00d4ff;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.last-update span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Background Effects */
+.background-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+  animation: float 8s ease-in-out infinite;
+}
+
+.bg-circle.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.bg-circle.circle-2 {
+  width: 250px;
+  height: 250px;
+  bottom: -80px;
+  left: -80px;
+  animation-delay: 2s;
+}
+
+.bg-circle.circle-3 {
+  width: 200px;
+  height: 200px;
+  top: 40%;
+  left: -50px;
+  animation-delay: 4s;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-30px) scale(1.1);
+    opacity: 0.25;
+  }
+}
+
+/* Responsive */
+@media (max-width: 360px) {
+  .data-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .data-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+  
+  .data-icon {
+    margin: 0;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 500px) {
+  .data-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Avatar */
+.avatar-small {
+  width: 32px;
+  height: 32px;
+  
+  ion-icon {
+    font-size: 32px;
+    color: #00d4ff;
+  }
+}
+
+/* 🔥 ESTILOS PARA ESTADO DESCONECTADO */
+.status-card.disconnected {
+  border-color: rgba(255, 100, 100, 0.4);
+  box-shadow: 0 10px 40px rgba(255, 100, 100, 0.2);
+}
+
+.status-card.disconnected::before {
+  background: linear-gradient(90deg, #ff6464 0%, #ff4444 100%);
+}
+
+.status-icon.icon-disconnected {
+  background: linear-gradient(135deg, #ff6464 0%, #ff4444 100%);
+  box-shadow: 0 10px 30px rgba(255, 100, 100, 0.5);
+}
+
+.status-indicator.indicator-offline {
+  background: rgba(255, 100, 100, 0.1);
+}
+
+.status-indicator.indicator-offline span {
+  color: #ff6464;
+}
+
+.indicator-dot.dot-offline {
+  background: #ff6464;
+  box-shadow: 0 0 10px #ff6464;
+  animation: blink-slow 3s infinite;
+}
+
+@keyframes blink-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.data-card.card-disabled {
+  opacity: 0.5;
+  border-color: rgba(100, 100, 100, 0.2);
+}
+
+.data-card.card-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.data-card.card-disabled .data-value {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.last-update.update-offline {
+  background: rgba(255, 100, 100, 0.05);
+  border: 1px solid rgba(255, 100, 100, 0.2);
+}
+
+.last-update.update-offline ion-icon {
+  color: #ff6464;
+  animation: none;
+}
+
+.last-update.update-offline span {
+  color: rgba(255, 100, 100, 0.8);
+}
+
+.data-icon.altitude {
+  background: rgba(255, 170, 0, 0.1);
+  border-color: rgba(255, 170, 0, 0.3);
+}
+
+.data-icon.altitude ion-icon {
+  color: #ffaa00;
+}

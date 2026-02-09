@@ -1,0 +1,84 @@
+<ion-content [fullscreen]="true">
+  <div class="welcome-container">
+    
+    <!-- Logo Circle -->
+    <div class="logo-section">
+      <div class="logo-ring">
+        <div class="logo-ring-inner"></div>
+        <div class="logo-circle">
+          <div class="logo-icon">
+            <ion-icon name="shield-checkmark"></ion-icon>
+            <div class="logo-badge">
+              <ion-icon name="location"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Welcome Text -->
+    <div class="welcome-text-section">
+      <h1 class="welcome-title">
+        ¡Bienvenido a<br/>
+        <span class="brand-name">SmartSafe Backpack!</span>
+      </h1>
+      <p class="welcome-tagline">
+        Tu mochila, siempre segura y conectada.
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="buttons-section">
+      <ion-button 
+        expand="block" 
+        class="primary-button"
+        routerLink="/login"
+      >
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Iniciar Sesión
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        fill="outline"
+        class="secondary-button"
+        routerLink="/register"
+      >
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Crear Cuenta
+      </ion-button>
+    </div>
+
+    <!-- Footer Info -->
+    <div class="footer-info">
+      <div class="feature-item">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span>Seguridad</span>
+      </div>
+      <div class="feature-item">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <span>Alertas</span>
+      </div>
+      <div class="feature-item">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>GPS</span>
+      </div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="tech-lines">
+      <div class="line line-1"></div>
+      <div class="line line-2"></div>
+      <div class="line line-3"></div>
+    </div>
+
+    <!-- Background Decorations -->
+    <div class="background-decoration">
+      <div class="bg-circle bg-circle-1"></div>
+      <div class="bg-circle bg-circle-2"></div>
+      <div class="bg-circle bg-circle-3"></div>
+      <div class="grid-pattern"></div>
+    </div>
+
+  </div>
+</ion-content>

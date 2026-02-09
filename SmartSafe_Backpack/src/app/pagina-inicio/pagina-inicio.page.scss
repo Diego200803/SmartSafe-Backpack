@@ -1,0 +1,447 @@
+/* Content Background */
+ion-content {
+  --background: linear-gradient(135deg, #0a1628 0%, #0d1f35 25%, #1a2845 50%, #0f1b2e 75%, #0a1628 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Logo Section */
+.logo-section {
+  margin-bottom: 50px;
+  animation: zoomIn 0.8s ease-out;
+}
+
+.logo-ring {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-ring-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(0, 212, 255, 0.3);
+  border-radius: 50%;
+  animation: rotate 20s linear infinite;
+}
+
+.logo-ring-inner::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #00d4ff;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00d4ff;
+  transform: translateX(-50%);
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.logo-circle {
+  width: 160px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 50%;
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  box-shadow: 
+    0 0 40px rgba(0, 212, 255, 0.3),
+    inset 0 0 30px rgba(0, 212, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 40px rgba(0, 212, 255, 0.3),
+      inset 0 0 30px rgba(0, 212, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 60px rgba(0, 212, 255, 0.5),
+      inset 0 0 40px rgba(0, 212, 255, 0.2);
+  }
+}
+
+.logo-icon {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon > ion-icon {
+  font-size: 80px;
+  color: #00d4ff;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+}
+
+.logo-badge {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #0a1628;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.logo-badge ion-icon {
+  font-size: 24px;
+  color: white;
+}
+
+/* Welcome Text Section */
+.welcome-text-section {
+  text-align: center;
+  margin-bottom: 50px;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.brand-name {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  margin-top: 8px;
+}
+
+.welcome-tagline {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+/* Buttons Section */
+.buttons-section {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+
+.primary-button {
+  --background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+  --border-radius: 16px;
+  --box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.primary-button:hover::before {
+  left: 100%;
+}
+
+.primary-button ion-icon {
+  font-size: 22px;
+  margin-right: 8px;
+}
+
+.secondary-button {
+  --border-color: rgba(0, 212, 255, 0.5);
+  --color: #00d4ff;
+  --border-radius: 16px;
+  --border-width: 2px;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  background: rgba(0, 212, 255, 0.05);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+  --border-color: rgba(0, 212, 255, 0.8);
+  background: rgba(0, 212, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.secondary-button ion-icon {
+  font-size: 22px;
+  margin-right: 8px;
+}
+
+/* Footer Info */
+.footer-info {
+  display: flex;
+  gap: 40px;
+  animation: fadeIn 0.8s ease-out 0.7s both;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.7;
+  transition: all 0.3s;
+}
+
+.feature-item:hover {
+  opacity: 1;
+  transform: translateY(-4px);
+}
+
+.feature-item ion-icon {
+  font-size: 28px;
+  color: #00d4ff;
+}
+
+.feature-item span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+/* Tech Lines Decoration */
+.tech-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+  animation: slide 8s linear infinite;
+}
+
+.line-1 {
+  top: 20%;
+  width: 60%;
+  left: -60%;
+}
+
+.line-2 {
+  top: 50%;
+  width: 40%;
+  right: -40%;
+  animation-delay: 2s;
+  animation-direction: reverse;
+}
+
+.line-3 {
+  bottom: 20%;
+  width: 50%;
+  left: -50%;
+  animation-delay: 4s;
+}
+
+@keyframes slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200vw); }
+}
+
+/* Background Decoration */
+.background-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  animation: float-slow 15s ease-in-out infinite;
+}
+
+.bg-circle-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #00d4ff, transparent);
+  top: -200px;
+  right: -200px;
+  animation-delay: 0s;
+}
+
+.bg-circle-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #0099ff, transparent);
+  bottom: -175px;
+  left: -175px;
+  animation-delay: 5s;
+}
+
+.bg-circle-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #00ff88, transparent);
+  top: 40%;
+  left: -150px;
+  animation-delay: 10s;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Grid Pattern */
+.grid-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.3;
+  animation: grid-move 20s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Animations */
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-height: 700px) {
+  .logo-section {
+    margin-bottom: 30px;
+  }
+  
+  .logo-ring {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .logo-circle {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .logo-icon > ion-icon {
+    font-size: 60px;
+  }
+  
+  .welcome-text-section {
+    margin-bottom: 30px;
+  }
+  
+  .welcome-title {
+    font-size: 24px;
+  }
+  
+  .brand-name {
+    font-size: 28px;
+  }
+}

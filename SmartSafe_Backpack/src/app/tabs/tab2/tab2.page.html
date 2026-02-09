@@ -1,0 +1,165 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title class="toolbar-title">Localización en Tiempo Real</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentPopover($event)">
+        <ion-icon name="person-circle-outline" class="profile-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="map-container">
+    
+    <!-- 🔥 GPS Status Bar - ESTADOS DINÁMICOS -->
+    <div class="gps-status-bar" 
+         [class.status-inactive]="!isConnected"
+         [class.status-searching]="isSearchingGPS">
+      <div class="status-info">
+        <div class="gps-indicator">
+          <!-- 🔥 Iconos según estado -->
+          <ion-icon 
+            *ngIf="!isConnected" 
+            name="navigate-circle-outline">
+          </ion-icon>
+          
+          <ion-icon 
+            *ngIf="isConnected && isSearchingGPS" 
+            name="scan-circle-outline" 
+            class="searching-icon">
+          </ion-icon>
+          
+          <ion-icon 
+            *ngIf="isConnected && hasGPSFix" 
+            name="navigate-circle">
+          </ion-icon>
+          
+          <!-- 🔥 Texto según estado -->
+          <span *ngIf="!isConnected">ESP32 Desconectado</span>
+          <span *ngIf="isConnected && isSearchingGPS">Buscando Satélites...</span>
+          <span *ngIf="isConnected && hasGPSFix">GPS con FIX</span>
+        </div>
+        
+        <!-- 🔥 Barras de señal solo si tiene FIX -->
+        <div class="signal-strength" *ngIf="hasGPSFix">
+          <div class="signal-bar" [class.active]="satellites >= 1"></div>
+          <div class="signal-bar" [class.active]="satellites >= 3"></div>
+          <div class="signal-bar" [class.active]="satellites >= 5"></div>
+          <div class="signal-bar" [class.active]="satellites >= 7"></div>
+        </div>
+        
+        <!-- 🔥 Spinner mientras busca satélites -->
+        <div class="searching-spinner" *ngIf="isSearchingGPS">
+          <div class="spinner-ring"></div>
+        </div>
+      </div>
+      
+      <!-- 🔥 Badge de satélites -->
+      <div class="accuracy-badge" 
+           [class.badge-inactive]="!isConnected"
+           [class.badge-searching]="isSearchingGPS">
+        <ion-icon name="radio-outline"></ion-icon>
+        <span>{{ satellites }} SAT</span>
+      </div>
+    </div>
+
+    <!-- Mapa de Google Maps -->
+    <div class="map-area">
+      <div id="map"></div>
+      
+      <!-- 🔥 Overlay de estado de búsqueda -->
+      <div class="map-overlay" *ngIf="isSearchingGPS">
+        <div class="overlay-content">
+          <div class="pulse-circle"></div>
+          <ion-icon name="satellite-outline" class="satellite-icon"></ion-icon>
+          <p class="overlay-text">Buscando señal GPS...</p>
+          <p class="overlay-subtext">{{ satellites }} satélite(s) detectado(s)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 Location Info Card - ESTADOS DINÁMICOS -->
+    <div class="location-info-card" 
+         [class.card-inactive]="!isConnected"
+         [class.card-searching]="isSearchingGPS">
+      <div class="card-header">
+        <ion-icon 
+          [name]="!isConnected ? 'location-outline' : (isSearchingGPS ? 'search-outline' : 'location')">
+        </ion-icon>
+        
+        <h3>
+          {{ !isConnected ? 'ESP32 Desconectado' : (isSearchingGPS ? 'Esperando FIX GPS' : 'Ubicación Actual') }}
+        </h3>
+      </div>
+      
+      <div class="coordinates-grid">
+        <div class="coordinate-item">
+          <p class="label">Latitud</p>
+          <p class="value" [class.value-inactive]="!hasGPSFix">
+            {{ hasGPSFix ? (latitude | number:'1.6-6') + '°' : '---.------°' }}
+          </p>
+        </div>
+        <div class="coordinate-divider"></div>
+        <div class="coordinate-item">
+          <p class="label">Longitud</p>
+          <p class="value" [class.value-inactive]="!hasGPSFix">
+            {{ hasGPSFix ? (longitude | number:'1.6-6') + '°' : '---.------°' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- 🔥 Grid de datos adicionales -->
+      <div class="data-grid">
+        <div class="data-item">
+          <ion-icon name="speedometer-outline"></ion-icon>
+          <div class="data-content">
+            <p class="data-label">Velocidad</p>
+            <p class="data-value" [class.value-inactive]="!hasGPSFix">
+              {{ hasGPSFix ? (speed | number:'1.0-0') + ' km/h' : '--- km/h' }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="data-item">
+          <ion-icon name="analytics-outline"></ion-icon>
+          <div class="data-content">
+            <p class="data-label">Altitud</p>
+            <p class="data-value" [class.value-inactive]="!hasGPSFix">
+              {{ hasGPSFix ? (altitude | number:'1.0-0') + ' m' : '--- m' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="update-info">
+        <ion-icon 
+          [name]="!isConnected ? 'close-circle-outline' : (isSearchingGPS ? 'hourglass-outline' : 'time-outline')">
+        </ion-icon>
+        <span>{{ lastUpdateText }}</span>
+        
+        <!-- 🔥 Indicador EN VIVO solo con FIX -->
+        <div class="live-indicator" *ngIf="isConnected && hasGPSFix">
+          <div class="live-dot"></div>
+          <span>EN VIVO</span>
+        </div>
+        
+        <!-- 🔥 Indicador BUSCANDO -->
+        <div class="searching-indicator" *ngIf="isSearchingGPS">
+          <div class="searching-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <span>BUSCANDO</span>
+        </div>
+        
+        <!-- 🔥 Indicador OFFLINE -->
+        <div class="offline-indicator" *ngIf="!isConnected">
+          <span>OFFLINE</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

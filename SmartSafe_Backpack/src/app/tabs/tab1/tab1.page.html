@@ -1,0 +1,109 @@
+
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title class="toolbar-title">Inicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="home-container">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">SmartSafe Backpack</h1>
+      <p class="subtitle">Monitoreo inteligente en tiempo real</p>
+    </div>
+
+    <!-- Estado Principal - DINAMICO -->
+    <div class="status-card" [class.active]="isConnected" [class.disconnected]="!isConnected">
+      <div class="status-icon-container">
+        <div class="pulse-ring" *ngIf="isConnected"></div>
+        <div class="pulse-ring delay-1" *ngIf="isConnected"></div>
+        <div class="status-icon" [class.icon-disconnected]="!isConnected">
+          <ion-icon [name]="isConnected ? 'backpack' : 'power-outline'"></ion-icon>
+        </div>
+      </div>
+      
+      <div class="status-info">
+        <h2 class="status-title">{{ isConnected ? 'Mochila Encendida' : 'Mochila Apagada' }}</h2>
+        <p class="status-subtitle">{{ isConnected ? 'Conectada y monitoreando' : 'Dispositivo desconectado' }}</p>
+      </div>
+
+      <div class="status-indicator" [class.indicator-offline]="!isConnected">
+        <div class="indicator-dot" [class.dot-offline]="!isConnected"></div>
+        <span>{{ isConnected ? 'En línea' : 'Desconectado' }}</span>
+      </div>
+    </div>
+
+    <!-- Datos en Tiempo Real -->
+    <div class="section-title">
+      <ion-icon name="analytics-outline"></ion-icon>
+      <h3>Datos en tiempo real</h3>
+    </div>
+
+    <div class="data-cards-grid">
+      <!-- Peso Card -->
+      <div class="data-card" [class.card-disabled]="!isConnected">
+        <div class="data-icon weight">
+          <ion-icon name="scale-outline"></ion-icon>
+        </div>
+        <div class="data-info">
+          <p class="data-label">Peso actual</p>
+          <h3 class="data-value">{{ isConnected ? '5.2' : '0.0' }} <span>kg</span></h3>
+        </div>
+      </div>
+
+      <!-- Temperatura Card -->
+      <div class="data-card" [class.card-disabled]="!isConnected">
+        <div class="data-icon temperature">
+          <ion-icon name="thermometer-outline"></ion-icon>
+        </div>
+        <div class="data-info">
+          <p class="data-label">Temperatura</p>
+          <h3 class="data-value">{{ temperatura | number:'1.1-1' }} <span>°C</span></h3>
+        </div>
+      </div>
+
+      <!-- Presión Card -->
+      <div class="data-card" [class.card-disabled]="!isConnected">
+        <div class="data-icon pressure">
+          <ion-icon name="speedometer-outline"></ion-icon>
+        </div>
+        <div class="data-info">
+          <p class="data-label">Presión</p>
+          <h3 class="data-value">{{ presion | number:'1.0-0' }} <span>hPa</span></h3>
+        </div>
+      </div>
+
+      <!-- Altitud Card -->
+      <div class="data-card" [class.card-disabled]="!isConnected">
+        <div class="data-icon altitude">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <div class="data-info">
+          <p class="data-label">Altitud</p>
+          <h3 class="data-value">{{ altitud | number:'1.0-0' }} <span>m</span></h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Última Actualización - DINÁMICO -->
+    <div class="last-update" [class.update-offline]="!isConnected">
+      <ion-icon [name]="isConnected ? 'sync-outline' : 'close-circle-outline'"></ion-icon>
+      <span>{{ isConnected ? 'Última actualización: ' + lastUpdateText : 'Sin conexión' }}</span>
+    </div>
+
+  </div>
+
+  <!-- Background Effects -->
+  <div class="background-effects">
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+    <div class="bg-circle circle-3"></div>
+  </div>
+</ion-content>

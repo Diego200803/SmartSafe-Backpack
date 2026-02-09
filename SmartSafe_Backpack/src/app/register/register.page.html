@@ -1,0 +1,76 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="register-container">
+    <!-- Header con botón de regreso -->
+    <div class="back-button" routerLink="/pagina-inicio">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </div>
+
+    <!-- Logo y Header -->
+    <div class="header-section">
+      <div class="logo-circle">
+        <ion-icon name="person-add-outline"></ion-icon>
+      </div>
+      <h1 class="welcome-text">Crear Cuenta</h1>
+      <p class="subtitle">Únete a SmartSafe Backpack</p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="register-form">
+      <!-- Nombre Input -->
+      <div class="input-group">
+        <ion-icon name="person-outline" class="input-icon"></ion-icon>
+        <ion-input type="text" placeholder="Nombre completo" class="custom-input" [(ngModel)]="name"></ion-input>
+      </div>
+      <!-- Email Input -->
+      <div class="input-group">
+        <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+        <ion-input type="email" placeholder="Correo electrónico" class="custom-input" [(ngModel)]="email"></ion-input>
+      </div>
+
+      <!-- Password Input -->
+      <div class="input-group">
+        <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+        <ion-input [type]="showPassword ? 'text' : 'password'" placeholder="Contraseña" class="custom-input"
+          [(ngModel)]="password"></ion-input>
+        <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" class="eye-icon"
+          (click)="togglePasswordVisibility('password')"></ion-icon>
+      </div>
+
+      <!-- Password Strength Indicator (ejemplo visual) -->
+      <div class="password-strength" *ngIf="password.length > 0">
+        <div class="strength-bar">
+          <div class="strength-fill" [ngClass]="getPasswordStrength().class"
+            [style.width.%]="getPasswordStrength().level"></div>
+        </div>
+        <span class="strength-text">{{ getPasswordStrength().text }}</span>
+      </div>
+
+      <!-- Confirm Password Input -->
+      <div class="input-group">
+        <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+        <ion-input [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Confirmar contraseña"
+          class="custom-input" [(ngModel)]="confirmPassword"></ion-input>
+        <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'" class="eye-icon"
+          (click)="togglePasswordVisibility('confirm')"></ion-icon>
+      </div>
+
+
+      <!-- Botón Register -->
+      <ion-button expand="block" class="register-button" (click)="register()">
+        Crear Cuenta
+      </ion-button>
+
+      <!-- Login Link -->
+      <div class="login-section">
+        <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+      </div>
+    </div>
+
+    <!-- Decoración de fondo -->
+    <div class="background-decoration">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+  </div>
+</ion-content>
