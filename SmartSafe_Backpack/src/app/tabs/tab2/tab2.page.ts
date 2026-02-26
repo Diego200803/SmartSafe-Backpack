@@ -71,7 +71,7 @@ export class Tab2Page implements OnInit, AfterViewInit, OnDestroy {
       this.loadMap();
       this.listenGPS();
       this.startMonitoring();
-    }, 300);
+    }, 500);
   }
 
   ngOnDestroy() {
@@ -81,32 +81,37 @@ export class Tab2Page implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ================= MAPA =================
-  loadMap() {
-    if (!google || !google.maps) {
-      console.error('Google Maps no cargado');
-      return;
-    }
-
-    const mapOptions = {
-      center: { lat: -2.8973, lng: -79.0058 },
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      disableDefaultUI: true,
-      styles: [
-        { "elementType": "geometry", "stylers": [{ "color": "#1d2c4d" }] },
-        { "elementType": "labels.text.fill", "stylers": [{ "color": "#8ec3b9" }] },
-        { "elementType": "labels.text.stroke", "stylers": [{ "color": "#1a3646" }] },
-        { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#38414e" }] },
-        { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#0a2342" }] }
-      ]
-    };
-
-    const mapElement = document.getElementById('map');
-    if (!mapElement) return;
-
-    this.map = new google.maps.Map(mapElement, mapOptions);
-    console.log('✅ Mapa cargado');
+ loadMap() {
+  const mapElement = document.getElementById('map');
+  
+  if (!mapElement) {
+    console.error('❌ Elemento #map no encontrado, reintentando...');
+    setTimeout(() => this.loadMap(), 500); // 🔥 Reintenta si no existe
+    return;
   }
+
+  if (!google || !google.maps) {
+    console.error('Google Maps no cargado');
+    return;
+  }
+
+  const mapOptions = {
+    center: { lat: -2.8973, lng: -79.0058 },
+    zoom: 15,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    disableDefaultUI: true,
+    styles: [
+      { "elementType": "geometry", "stylers": [{ "color": "#1d2c4d" }] },
+      { "elementType": "labels.text.fill", "stylers": [{ "color": "#8ec3b9" }] },
+      { "elementType": "labels.text.stroke", "stylers": [{ "color": "#1a3646" }] },
+      { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#38414e" }] },
+      { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#0a2342" }] }
+    ]
+  };
+
+  this.map = new google.maps.Map(mapElement, mapOptions);
+  console.log('✅ Mapa cargado');
+}
 
   // ================= 🔥 FIREBASE GPS - LISTENER UNIFICADO =================
   listenGPS() {

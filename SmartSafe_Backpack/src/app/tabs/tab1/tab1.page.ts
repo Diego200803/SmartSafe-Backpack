@@ -24,24 +24,20 @@ export class Tab1Page implements OnInit, OnDestroy {
   presion: number = 0;
   altitud: number = 0;
 
-  // 🔥 Sistema de conexión
+  // HX711
+  peso: number = 0;
+
+  // Sistema de conexión
   isConnected: boolean = false;
   lastDataUpdate: number = 0;
   lastUpdateText: string = 'Esperando datos...';
-  
-  // Buffer de conexión
+
   private connectionHistory: boolean[] = [];
   private readonly BUFFER_SIZE = 8;
-  
-  // Intervalo de verificación
   private monitoringInterval: any;
-  
-  // Tiempos optimizados
   private readonly DATA_TIMEOUT = 5000;
   private readonly QUICK_RECONNECT = 2;
   private readonly STABLE_DISCONNECT = 6;
-  
-  // Contadores
   private consecutiveSuccess: number = 0;
 
   constructor(
@@ -63,13 +59,19 @@ export class Tab1Page implements OnInit, OnDestroy {
     }
   }
 
+  // Getter para formatear el peso: >=1000g → X,X kg | <1000g → XXX g
+  get pesoDisplay(): string {
+    if (!this.isConnected || this.peso === 0) return '0 g';
+    if (this.peso >= 1000) {
+      return (this.peso / 1000).toFixed(1).replace('.', ',') + ' kg';
+    }
+    return Math.round(this.peso) + ' g';
+  }
+
   initializeFirebaseListeners() {
     const app = initializeApp(environment.firebaseConfig);
     const db = getDatabase(app);
 
-    // 🔥 NUEVO: Listeners INDEPENDIENTES para cada sensor (MÁS RÁPIDO)
-    
-    // Listener 1: TEMPERATURA (actualización instantánea)
     const tempRef = ref(db, 'BMP280/temperatura');
     onValue(tempRef, (snapshot) => {
       const value = snapshot.val();
@@ -77,11 +79,8 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.temperatura = value;
         this.onDataReceived('temperatura', value);
       }
-    }, (error) => {
-      console.error('❌ Error temperatura:', error);
-    });
+    }, (error) => { console.error('❌ Error temperatura:', error); });
 
-    // Listener 2: PRESIÓN (actualización instantánea)
     const presionRef = ref(db, 'BMP280/presion');
     onValue(presionRef, (snapshot) => {
       const value = snapshot.val();
@@ -89,11 +88,8 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.presion = value;
         this.onDataReceived('presion', value);
       }
-    }, (error) => {
-      console.error('❌ Error presión:', error);
-    });
+    }, (error) => { console.error('❌ Error presión:', error); });
 
-    // Listener 3: ALTITUD (actualización instantánea)
     const altitudRef = ref(db, 'BMP280/altitud');
     onValue(altitudRef, (snapshot) => {
       const value = snapshot.val();
@@ -101,36 +97,37 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.altitud = value;
         this.onDataReceived('altitud', value);
       }
-    }, (error) => {
-      console.error('❌ Error altitud:', error);
-    });
+    }, (error) => { console.error('❌ Error altitud:', error); });
 
-    // 🔥 Listener 4: lastUpdate (para verificar conexión)
     const lastUpdateRef = ref(db, 'BMP280/lastUpdate');
     onValue(lastUpdateRef, (snapshot) => {
       const timestamp = snapshot.val();
       if (timestamp !== null && timestamp !== undefined) {
         this.onDataReceived('heartbeat', timestamp);
       }
-    }, (error) => {
-      console.error('❌ Error heartbeat:', error);
-    });
+    }, (error) => { console.error('❌ Error heartbeat:', error); });
+
+    // Listener peso HX711
+    const pesoRef = ref(db, 'HX711/peso');
+    onValue(pesoRef, (snapshot) => {
+      const value = snapshot.val();
+      if (value !== null && value !== undefined) {
+        this.peso = value;
+        this.onDataReceived('peso', value);
+      }
+    }, (error) => { console.error('❌ Error peso:', error); });
   }
 
-  // 🔥 NUEVO: Callback cuando llegan datos (CUALQUIER dato)
   onDataReceived(source: string, value: any) {
     const now = Date.now();
     this.lastDataUpdate = now;
     this.consecutiveSuccess++;
     this.addToHistory(true);
-    
-    // Log solo para debugging (puedes comentar esta línea en producción)
     if (source !== 'heartbeat') {
       console.log('📡', source + ':', value);
     }
   }
 
-  // Monitoreo activo cada 500ms
   startMonitoring() {
     this.monitoringInterval = setInterval(() => {
       this.checkConnectionStatus();
@@ -138,18 +135,15 @@ export class Tab1Page implements OnInit, OnDestroy {
     }, 500);
   }
 
-  // Verificar estado de conexión
   checkConnectionStatus() {
     const now = Date.now();
     const timeSinceLastData = now - this.lastDataUpdate;
-    
-    // Si han pasado más de DATA_TIMEOUT sin datos
+
     if (timeSinceLastData > this.DATA_TIMEOUT) {
       this.addToHistory(false);
       this.consecutiveSuccess = 0;
     }
-    
-    // Reconexión RÁPIDA: 2 actualizaciones consecutivas
+
     if (this.consecutiveSuccess >= this.QUICK_RECONNECT) {
       if (!this.isConnected) {
         console.log('✅ ESP32 CONECTADO');
@@ -157,20 +151,18 @@ export class Tab1Page implements OnInit, OnDestroy {
       }
       return;
     }
-    
-    // Evaluación del buffer
+
     if (this.connectionHistory.length >= this.BUFFER_SIZE) {
       const successCount = this.connectionHistory.filter(x => x === true).length;
       const failCount = this.BUFFER_SIZE - successCount;
-      
+
       if (failCount >= this.STABLE_DISCONNECT) {
         if (this.isConnected) {
           console.log('❌ ESP32 DESCONECTADO - Fallos:', failCount + '/' + this.BUFFER_SIZE);
           this.isConnected = false;
           this.resetSensorValues();
         }
-      }
-      else if (successCount >= (this.BUFFER_SIZE - this.STABLE_DISCONNECT + 1)) {
+      } else if (successCount >= (this.BUFFER_SIZE - this.STABLE_DISCONNECT + 1)) {
         if (!this.isConnected) {
           console.log('✅ ESP32 CONECTADO (estable)');
           this.isConnected = true;
@@ -179,55 +171,45 @@ export class Tab1Page implements OnInit, OnDestroy {
     }
   }
 
-  // Agregar al historial de conexión
   addToHistory(success: boolean) {
     this.connectionHistory.push(success);
-    
     if (this.connectionHistory.length > this.BUFFER_SIZE) {
       this.connectionHistory.shift();
     }
   }
 
-  // Resetear valores a 0
   resetSensorValues() {
     this.temperatura = 0;
     this.presion = 0;
     this.altitud = 0;
+    this.peso = 0;
   }
 
-  // Actualizar texto de última actualización
   updateLastUpdateText() {
     if (!this.isConnected) {
       this.lastUpdateText = 'Desconectado';
       return;
     }
-
     if (this.lastDataUpdate === 0) {
       this.lastUpdateText = 'Esperando datos...';
       return;
     }
-
     const timeDiff = Math.floor((Date.now() - this.lastDataUpdate) / 1000);
-
     if (timeDiff < 2) {
       this.lastUpdateText = 'Ahora mismo';
     } else if (timeDiff < 60) {
       this.lastUpdateText = 'Hace ' + timeDiff + ' seg';
     } else if (timeDiff < 3600) {
-      const minutes = Math.floor(timeDiff / 60);
-      this.lastUpdateText = 'Hace ' + minutes + ' min';
+      this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 60) + ' min';
     } else {
-      const hours = Math.floor(timeDiff / 3600);
-      this.lastUpdateText = 'Hace ' + hours + ' h';
+      this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 3600) + ' h';
     }
   }
 
   async loadUserData() {
     const currentUser = this.firebaseService.getCurrentUser();
-
     if (currentUser) {
       this.userEmail = currentUser.email || '';
-
       if (currentUser.displayName) {
         this.userFullName = currentUser.displayName;
         this.userName = this.getFirstName(currentUser.displayName);
@@ -259,7 +241,6 @@ export class Tab1Page implements OnInit, OnDestroy {
         onLogout: () => this.logout()
       }
     });
-
     await popover.present();
   }
 
@@ -268,10 +249,7 @@ export class Tab1Page implements OnInit, OnDestroy {
       header: '¿Cerrar sesión?',
       message: '¿Estás seguro de que deseas cerrar sesión?',
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Cerrar sesión',
           handler: async () => {
@@ -282,7 +260,6 @@ export class Tab1Page implements OnInit, OnDestroy {
         }
       ]
     });
-
     await alert.present();
   }
 }

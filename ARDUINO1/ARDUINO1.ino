@@ -6,6 +6,23 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 #include <TinyGPS++.h>
+#include <Adafruit_PN532.h>
+#include "HX711.h"
+#include <EEPROM.h>
+
+// ================= HX711 =================
+#define DT 25
+#define SCK 26
+
+#define UMBRAL_ACTIVACION 300.0
+#define UMBRAL_CAIDA 400.0
+#define UMBRAL_RETORNO 150.0
+
+HX711 balanza;
+float factor_calibracion;
+bool calibrado = false;
+bool pesoActivo = false;
+float ultimoPeso = 0;
 
 // ================= PINS BMP280 =================
 #define SDA_PIN 19
@@ -15,16 +32,19 @@
 
 Adafruit_BMP280 bmp;
 
+// ================= PN532 =================
+Adafruit_PN532 nfc(SDA_PIN, SCL_PIN);
+
 // ================= PINS GPS =================
-#define RXD2 16   // ESP32 RX <- GPS TX
-#define TXD2 17   // ESP32 TX -> GPS RX
+#define RXD2 16
+#define TXD2 17
 
 HardwareSerial neogps(1);
 TinyGPSPlus gps;
 
 // ================= WiFi =================
-const char* WIFI_SSID = "Celerity_Sumiordenadores";
-const char* WIFI_PASSWORD = "nicovale1234";
+const char* WIFI_SSID = "A36D";
+const char* WIFI_PASSWORD = "12345678";
 
 // ================= Firebase =================
 const char* API_KEY = "AIzaSyCzbr7xVWPI__gHan0C0AuVcjm4EWJLSOw";
@@ -36,48 +56,121 @@ FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 
-// ================= VARIABLES DE CONTROL =================
-bool wifiConectado = false;
-bool firebaseListo = false;
-unsigned long lastPrint = 0;
-
-// ================= PROTOTIPOS DE FUNCIONES =================
+// ================= PROTOTIPOS =================
 void setupWiFi();
 void setupFirebase();
+bool esperarHX711();
+
+bool esperarHX711() {
+  unsigned long inicio = millis();
+  while (!balanza.is_ready()) {
+    if (millis() - inicio > 5000) return false;
+  }
+  return true;
+}
 
 // ================= SETUP =================
 void setup() {
+
   Serial.begin(115200);
   delay(1000);
 
-  // ===== WiFi =====
   setupWiFi();
-
-  // ===== Firebase =====
   setupFirebase();
 
-  // ===== BMP280 =====
-  Serial.println("Iniciando BMP280...");
   Wire.begin(SDA_PIN, SCL_PIN);
 
-  if (!bmp.begin(BMP_ADDRESS)) {
-    Serial.println("❌ No se encontró el BMP280");
-    while (1); // Detener si falla
-  }
-  Serial.println("✅ BMP280 detectado correctamente");
+  if (!bmp.begin(BMP_ADDRESS)) while (1);
 
-  // ===== GPS =====
-  Serial.println("Iniciando GPS...");
+  nfc.begin();
+  delay(500);
+  if (nfc.getFirmwareVersion()) nfc.SAMConfig();
+
   neogps.begin(9600, SERIAL_8N1, RXD2, TXD2);
 
-  Serial.println("✅ Sistema iniciado - Enviando cada 1 segundo");
+  // ===== HX711 =====
+  Serial.println("Iniciando HX711...");
+  EEPROM.begin(512);
+  balanza.begin(DT, SCK);
+
+  if (esperarHX711()) {
+
+    EEPROM.get(0, factor_calibracion);
+
+    if (factor_calibracion != 0 && !isnan(factor_calibracion)) {
+
+      balanza.set_scale(factor_calibracion);
+
+      delay(5000);
+      balanza.tare();
+      delay(1000);
+      balanza.tare();
+
+      calibrado = true;
+      Serial.println("HX711 BLOQUEADO EN 0");
+    }
+  }
+
+  Serial.println("Sistema iniciado");
 }
 
 // ================= LOOP =================
 void loop() {
-  // ===== LEER GPS CONTINUAMENTE =====
+
   while (neogps.available()) {
     gps.encode(neogps.read());
+  }
+
+  // ================= HX711 =================
+  float peso = 0;
+
+  if (calibrado && balanza.is_ready()) {
+
+    float lectura = balanza.get_units(6);
+    if (lectura < 0) lectura = 0;
+
+    // Activar cuando hay peso real
+    if (!pesoActivo && lectura > UMBRAL_ACTIVACION) {
+      pesoActivo = true;
+    }
+
+    if (pesoActivo) {
+
+      // Detectar caída brusca grande
+      if ((ultimoPeso - lectura) > UMBRAL_CAIDA) {
+        pesoActivo = false;
+        balanza.tare();
+        lectura = 0;
+      }
+
+      // Detectar retiro normal
+      else if (lectura < UMBRAL_RETORNO) {
+        pesoActivo = false;
+        balanza.tare();
+        lectura = 0;
+      }
+
+      peso = pesoActivo ? lectura : 0;
+    }
+    else {
+      peso = 0;
+    }
+
+    ultimoPeso = lectura;
+  }
+
+  // ================= NFC =================
+  uint8_t uid[7];
+  uint8_t uidLength;
+  bool tarjetaDetectada = false;
+  String uidString = "";
+
+  if (nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength, 100)) {
+    tarjetaDetectada = true;
+    for (uint8_t i = 0; i < uidLength; i++) {
+      uidString += String(uid[i], HEX);
+      if (i < uidLength - 1) uidString += ":";
+    }
   }
 
   // ================= BMP280 =================
@@ -85,101 +178,73 @@ void loop() {
   float presion = bmp.readPressure() / 100.0F;
   float altitudBMP = bmp.readAltitude(SEALEVELPRESSURE_HPA);
 
-  // ================= GPS - OBTENER VALORES =================
-  // 🔥 Usar gps.satellites.value() SIEMPRE (con o sin fix)
+  // ================= GPS =================
   int satellites = gps.satellites.value();
-  
-  // 🔥 Verificar FIX GPS
   bool gpsFix = gps.location.isValid();
-  
-  // 🔥 Obtener coordenadas (siempre, incluso si son 0)
   float latitude  = gps.location.lat();
   float longitude = gps.location.lng();
   float speed     = gps.speed.kmph();
   float altitudeGPS = gps.altitude.meters();
 
-  // 🔥 Heartbeat para detección en la app
   unsigned long heartbeat = millis();
-
-  // ================= FIREBASE - ENVIAR DATOS =================
   bool envioOK = false;
 
   if (Firebase.ready()) {
-    
-    // ===== BMP280 =====
+
     Firebase.RTDB.setFloat(&fbdo, "/BMP280/temperatura", temperatura);
     Firebase.RTDB.setFloat(&fbdo, "/BMP280/presion", presion);
     Firebase.RTDB.setFloat(&fbdo, "/BMP280/altitud", altitudBMP);
     Firebase.RTDB.setInt(&fbdo, "/BMP280/lastUpdate", heartbeat);
 
-    // ===== GPS - ENVIAR SIEMPRE (con o sin FIX) =====
     Firebase.RTDB.setFloat(&fbdo, "/GPS/latitud", latitude);
     Firebase.RTDB.setFloat(&fbdo, "/GPS/longitud", longitude);
     Firebase.RTDB.setFloat(&fbdo, "/GPS/velocidad", speed);
     Firebase.RTDB.setInt(&fbdo, "/GPS/satelites", satellites);
     Firebase.RTDB.setFloat(&fbdo, "/GPS/altitud", altitudeGPS);
-    Firebase.RTDB.setBool(&fbdo, "/GPS/fix", gpsFix);           // 🔥 Estado de FIX
-    Firebase.RTDB.setInt(&fbdo, "/GPS/heartbeat", heartbeat);   // 🔥 Para detección de conexión
+    Firebase.RTDB.setBool(&fbdo, "/GPS/fix", gpsFix);
+    Firebase.RTDB.setInt(&fbdo, "/GPS/heartbeat", heartbeat);
+
+    Firebase.RTDB.setBool(&fbdo, "/NFC/detectada", tarjetaDetectada);
+    if (tarjetaDetectada) {
+      Firebase.RTDB.setString(&fbdo, "/NFC/UID", uidString);
+      Firebase.RTDB.setInt(&fbdo, "/NFC/lastScan", heartbeat);
+    }
+
+    Firebase.RTDB.setFloat(&fbdo, "/HX711/peso", peso);
+    Firebase.RTDB.setBool(&fbdo, "/HX711/activo", pesoActivo);
+    Firebase.RTDB.setBool(&fbdo, "/HX711/calibrado", calibrado);
+    Firebase.RTDB.setInt(&fbdo, "/HX711/lastUpdate", heartbeat);
 
     envioOK = true;
   }
 
-  // ================= SERIAL MONITOR - CADA 1s =================
-  if (millis() - lastPrint >= 1000) {
-    lastPrint = millis();
+  // ================= SERIAL =================
+  Serial.println("--------------------------------------------");
+  Serial.println("⚖ HX711");
+  Serial.print("   Peso: ");
+  Serial.print(peso);
+  Serial.println(" g");
+  Serial.println("--------------------------------------------");
 
-    Serial.println("============================================");
-    Serial.println("      ESTADO DEL SISTEMA - SmartSafe");
-    Serial.println("============================================");
+  Serial.println("Sensor BMP280");
+  Serial.print("   Temperatura: ");
+  Serial.println(temperatura);
+  Serial.println("--------------------------------------------");
 
-    // ===== WiFi =====
-    Serial.print("WiFi:     ");
-    Serial.println(wifiConectado ? "✅ Conectado" : "❌ Desconectado");
-
-    // ===== Firebase =====
-    Serial.print("Firebase: ");
-    Serial.println(firebaseListo ? "✅ Listo" : "❌ No listo");
-
-    Serial.println("--------------------------------------------");
-
-    // ===== BMP280 =====
-    Serial.println("📊 Sensor BMP280");
-    Serial.print("   Temperatura: "); Serial.print(temperatura, 1); Serial.println(" °C");
-    Serial.print("   Presión:     "); Serial.print(presion, 1); Serial.println(" hPa");
-    Serial.print("   Altitud:     "); Serial.print(altitudBMP, 1); Serial.println(" m");
-
-    Serial.println("--------------------------------------------");
-
-    // ===== GPS =====
-    Serial.println("📡 GPS");
-    Serial.print("   Estado FIX:  ");
-    
-    if (gpsFix) {
-      Serial.println("✅ FIX OBTENIDO");
-      Serial.print("   Satélites:   "); Serial.println(satellites);
-      Serial.print("   Latitud:     "); Serial.println(latitude, 6);
-      Serial.print("   Longitud:    "); Serial.println(longitude, 6);
-      Serial.print("   Velocidad:   "); Serial.print(speed, 1); Serial.println(" km/h");
-      Serial.print("   Altitud GPS: "); Serial.print(altitudeGPS, 1); Serial.println(" m");
-    } else {
-      Serial.println("❌ BUSCANDO SEÑAL...");
-      Serial.print("   Satélites detectados: "); Serial.println(satellites);
-      
-      if (satellites > 0) {
-        Serial.println("   ⏳ Satélites visibles, esperando FIX...");
-      } else {
-        Serial.println("   📡 Buscando satélites...");
-      }
-    }
-
-    Serial.println("--------------------------------------------");
-
-    // ===== Heartbeat y Envío =====
-    Serial.print("Heartbeat:   "); Serial.println(heartbeat);
-    Serial.print("Envío a FB:  "); Serial.println(envioOK ? "✅ OK" : "❌ ERROR");
-
-    Serial.println("============================================\n");
+  Serial.println("NFC");
+  if (tarjetaDetectada) {
+    Serial.print("   UID: ");
+    Serial.println(uidString);
+  } else {
+    Serial.println("   No hay tarjeta");
   }
+
+  Serial.println("--------------------------------------------");
+  Serial.print("Heartbeat: ");
+  Serial.println(heartbeat);
+  Serial.print("Envío FB: ");
+  Serial.println(envioOK ? " OK" : " ERROR");
+  Serial.println("============================================");
 
   delay(1000);
 }
@@ -187,18 +252,7 @@ void loop() {
 // ================= FUNCIONES =================
 void setupWiFi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Conectando a WiFi");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(300);
-  }
-
-  Serial.println("\n✅ WiFi conectado");
-  Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
-
-  wifiConectado = true;
+  while (WiFi.status() != WL_CONNECTED) delay(300);
 }
 
 void setupFirebase() {
@@ -207,10 +261,6 @@ void setupFirebase() {
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
   config.token_status_callback = tokenStatusCallback;
-
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
-
-  firebaseListo = true;
-  Serial.println("✅ Firebase configurado");
 }

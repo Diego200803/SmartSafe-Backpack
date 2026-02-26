@@ -4,7 +4,6 @@
   --color: white;
   border-bottom: 1px solid rgba(0, 212, 255, 0.2);
 }
-
 .toolbar-title {
   font-weight: 700;
   font-size: 18px;
@@ -16,7 +15,6 @@ ion-content {
   --background: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1b2e 100%);
   position: relative;
 }
-
 .schedule-container {
   position: relative;
   z-index: 2;
@@ -30,7 +28,6 @@ ion-content {
   margin-bottom: 30px;
   animation: fadeInDown 0.6s ease-out;
 }
-
 .main-title {
   font-size: 28px;
   font-weight: 800;
@@ -42,7 +39,6 @@ ion-content {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .subtitle {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.6);
@@ -60,25 +56,10 @@ ion-content {
   overflow-x: auto;
   padding-bottom: 10px;
 }
-
-/* Ocultar scrollbar pero mantener funcionalidad */
-.schedule-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.schedule-grid::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-}
-
-.schedule-grid::-webkit-scrollbar-thumb {
-  background: rgba(0, 212, 255, 0.3);
-  border-radius: 10px;
-}
-
-.schedule-grid::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 255, 0.5);
-}
+.schedule-grid::-webkit-scrollbar { height: 6px; }
+.schedule-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+.schedule-grid::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.3); border-radius: 10px; }
+.schedule-grid::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.5); }
 
 /* Headers */
 .schedule-header {
@@ -94,10 +75,7 @@ ion-content {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-.time-col {
-  font-size: 11px;
-}
+.time-col { font-size: 11px; }
 
 /* Time Cells */
 .time-cell {
@@ -115,7 +93,6 @@ ion-content {
   justify-content: center;
   line-height: 1.3;
 }
-
 .recreo-time {
   background: rgba(255, 170, 0, 0.1);
   border-color: rgba(255, 170, 0, 0.3);
@@ -136,61 +113,17 @@ ion-content {
   cursor: pointer;
   min-height: 60px;
 }
-
-.class-cell:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.subject-name {
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.3;
-  word-wrap: break-word;
-}
+.class-cell:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.subject-name { font-size: 11px; font-weight: 600; line-height: 1.3; word-wrap: break-word; }
 
 /* Materias - Colores */
-.matematicas {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #3b82f6;
-}
-
-.lengua {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ef4444;
-}
-
-.ciencias {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #22c55e;
-}
-
-.sociales {
-  background: rgba(249, 115, 22, 0.15);
-  border-color: rgba(249, 115, 22, 0.5);
-  color: #f97316;
-}
-
-.ed-fisica {
-  background: rgba(168, 85, 247, 0.15);
-  border-color: rgba(168, 85, 247, 0.5);
-  color: #a855f7;
-}
-
-.orientacion {
-  background: rgba(236, 72, 153, 0.15);
-  border-color: rgba(236, 72, 153, 0.5);
-  color: #ec4899;
-}
-
-.religion {
-  background: rgba(14, 165, 233, 0.15);
-  border-color: rgba(14, 165, 233, 0.5);
-  color: #0ea5e9;
-}
+.matematicas  { background: rgba(59,130,246,0.15);  border-color: rgba(59,130,246,0.5);  color: #3b82f6; }
+.lengua       { background: rgba(239,68,68,0.15);   border-color: rgba(239,68,68,0.5);   color: #ef4444; }
+.ciencias     { background: rgba(34,197,94,0.15);   border-color: rgba(34,197,94,0.5);   color: #22c55e; }
+.sociales     { background: rgba(249,115,22,0.15);  border-color: rgba(249,115,22,0.5);  color: #f97316; }
+.ed-fisica    { background: rgba(168,85,247,0.15);  border-color: rgba(168,85,247,0.5);  color: #a855f7; }
+.orientacion  { background: rgba(236,72,153,0.15);  border-color: rgba(236,72,153,0.5);  color: #ec4899; }
+.religion     { background: rgba(14,165,233,0.15);  border-color: rgba(14,165,233,0.5);  color: #0ea5e9; }
 
 /* Recreo Cell */
 .recreo-cell {
@@ -208,12 +141,9 @@ ion-content {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.recreo-cell ion-icon { font-size: 20px; }
 
-.recreo-cell ion-icon {
-  font-size: 20px;
-}
-
-/* Forgotten Section */
+/* ============ CUADERNOS SECTION ============ */
 .forgotten-section {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
@@ -223,50 +153,112 @@ ion-content {
   margin-bottom: 20px;
   animation: fadeInUp 0.6s ease-out 0.4s both;
 }
-
 .section-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
 }
+.section-header ion-icon { font-size: 28px; color: #00d4ff; }
+.section-header h3 { font-size: 20px; font-weight: 700; color: white; margin: 0; }
 
-.section-header ion-icon {
-  font-size: 28px;
-  color: #00d4ff;
+/* Día hoy */
+.dia-hoy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  margin-bottom: 20px;
+
+  ion-icon { font-size: 22px; color: #00d4ff; }
+  strong { color: #00d4ff; }
 }
 
-.section-header h3 {
-  font-size: 20px;
+/* Mensaje éxito al escanear */
+.mensaje-exito {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 2px solid rgba(34, 197, 94, 0.5);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  animation: fadeInDown 0.4s ease-out;
+
+  ion-icon { font-size: 24px; color: #22c55e; }
+  span { font-size: 14px; font-weight: 600; color: #22c55e; }
+}
+
+/* Lista de materias */
+.materias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.materia-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  ion-icon { font-size: 22px; }
+  span { flex: 1; }
+}
+.materia-item.ingresado {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #22c55e;
+}
+.materia-item.pendiente {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Badges */
+.badge-estado {
+  font-size: 11px;
   font-weight: 700;
-  color: white;
-  margin: 0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+.badge-estado.pendiente-badge {
+  background: rgba(255, 170, 0, 0.2);
+  color: #ffaa00;
 }
 
-/* Empty State */
+/* Mensaje estado general */
+.mensaje-estado {
+  text-align: center;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+
+  p { color: white; font-size: 15px; font-weight: 600; margin: 0; }
+}
+
+/* Empty State (fin de semana o sin clases) */
 .empty-state {
   text-align: center;
   padding: 40px 20px;
 }
-
 .empty-state ion-icon {
   font-size: 64px;
   color: rgba(0, 212, 255, 0.6);
   margin-bottom: 16px;
   animation: pulse-icon 2s ease-in-out infinite;
 }
-
-@keyframes pulse-icon {
-  0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
 .empty-state p {
   font-size: 16px;
   font-weight: 500;
@@ -274,263 +266,75 @@ ion-content {
   margin: 0;
 }
 
-/* Forgotten Grid */
-.forgotten-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.forgotten-item {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  border: 2px solid;
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.forgotten-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.forgotten-item ion-icon {
-  font-size: 32px;
-}
-
-.forgotten-item span {
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.forgot-badge {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Forgotten Item Colors */
-.matematicas-forgot {
-  border-color: rgba(59, 130, 246, 0.5);
-  color: #3b82f6;
-}
-
-.ciencias-forgot {
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #22c55e;
-}
-
-.lengua-forgot {
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #ef4444;
-}
-
-/* Forgotten Note */
-.forgotten-note {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.forgotten-note ion-icon {
-  font-size: 18px;
-  color: #00d4ff;
+@keyframes pulse-icon {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.05); }
 }
 
 /* Background Effects */
 .background-effects {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
 }
-
 .bg-circle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
   animation: float 8s ease-in-out infinite;
 }
-
-.circle-1 {
-  width: 300px;
-  height: 300px;
-  top: -100px;
-  right: -100px;
-  animation-delay: 0s;
-}
-
-.circle-2 {
-  width: 250px;
-  height: 250px;
-  bottom: -80px;
-  left: -80px;
-  animation-delay: 3s;
-}
+.circle-1 { width: 300px; height: 300px; top: -100px; right: -100px; animation-delay: 0s; }
+.circle-2 { width: 250px; height: 250px; bottom: -80px; left: -80px; animation-delay: 3s; }
 
 /* Animations */
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.15;
-  }
-  50% {
-    transform: translateY(-30px) scale(1.1);
-    opacity: 0.25;
-  }
+  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.15; }
+  50%       { transform: translateY(-30px) scale(1.1); opacity: 0.25; }
 }
 
-/* Responsive */
+/* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
-  .schedule-grid {
-    grid-template-columns: 60px repeat(5, minmax(80px, 1fr));
-  }
-
-  .subject-name {
-    font-size: 10px;
-  }
-
-  .forgotten-grid {
-    grid-template-columns: 1fr;
-  }
+  .schedule-grid { grid-template-columns: 60px repeat(5, minmax(80px, 1fr)); }
+  .subject-name { font-size: 10px; }
 }
 
 @media (max-width: 500px) {
-  .schedule-container {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .header-section {
-    margin-bottom: 20px;
-  }
-
-  .main-title {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-
-  .schedule-grid {
-    grid-template-columns: 55px repeat(5, minmax(75px, 1fr));
-    gap: 3px;
-  }
-
-  .time-cell {
-    font-size: 9px;
-    padding: 6px 2px;
-  }
-
-  .class-cell {
-    padding: 6px 4px;
-    min-height: 45px;
-  }
-
-  .subject-name {
-    font-size: 9px;
-    line-height: 1.2;
-  }
-
-  .schedule-header {
-    font-size: 10px;
-    padding: 8px 4px;
-  }
-
-  .recreo-cell {
-    font-size: 11px;
-    padding: 6px 2px;
-  }
-
-  .recreo-cell ion-icon {
-    font-size: 16px;
-  }
-
-  .forgotten-section {
-    padding: 16px 12px;
-  }
-
-  .section-header h3 {
-    font-size: 18px;
-  }
-
-  .empty-state {
-    padding: 30px 15px;
-  }
-
-  .empty-state ion-icon {
-    font-size: 48px;
-  }
-
-  .empty-state p {
-    font-size: 14px;
-  }
+  .schedule-container { padding-left: 8px; padding-right: 8px; }
+  .header-section { margin-bottom: 20px; }
+  .main-title { font-size: 24px; }
+  .subtitle { font-size: 13px; }
+  .schedule-grid { grid-template-columns: 55px repeat(5, minmax(75px, 1fr)); gap: 3px; }
+  .time-cell { font-size: 9px; padding: 6px 2px; }
+  .class-cell { padding: 6px 4px; min-height: 45px; }
+  .subject-name { font-size: 9px; line-height: 1.2; }
+  .schedule-header { font-size: 10px; padding: 8px 4px; }
+  .recreo-cell { font-size: 11px; padding: 6px 2px; }
+  .recreo-cell ion-icon { font-size: 16px; }
+  .forgotten-section { padding: 16px 12px; }
+  .section-header h3 { font-size: 18px; }
+  .empty-state { padding: 30px 15px; }
+  .empty-state ion-icon { font-size: 48px; }
+  .empty-state p { font-size: 14px; }
+  .materia-item { padding: 10px 12px; font-size: 13px; }
+  .mensaje-exito { padding: 10px 12px; }
+  .dia-hoy { font-size: 13px; }
 }
 
 @media (max-width: 380px) {
-  .schedule-grid {
-    grid-template-columns: 50px repeat(5, minmax(70px, 1fr));
-  }
-
-  .time-cell {
-    font-size: 8px;
-  }
-
-  .subject-name {
-    font-size: 8px;
-  }
-
-  .schedule-header {
-    font-size: 9px;
-    padding: 6px 2px;
-  }
-
-  .class-cell {
-    min-height: 40px;
-  }
+  .schedule-grid { grid-template-columns: 50px repeat(5, minmax(70px, 1fr)); }
+  .time-cell { font-size: 8px; }
+  .subject-name { font-size: 8px; }
+  .schedule-header { font-size: 9px; padding: 6px 2px; }
+  .class-cell { min-height: 40px; }
 }

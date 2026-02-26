@@ -1,4 +1,3 @@
-
 <ion-header [translucent]="true">
   <ion-toolbar class="custom-toolbar">
     <ion-title class="toolbar-title">Inicio</ion-title>
@@ -12,14 +11,14 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="home-container">
-    
+
     <!-- Header Section -->
     <div class="header-section">
       <h1 class="main-title">SmartSafe Backpack</h1>
       <p class="subtitle">Monitoreo inteligente en tiempo real</p>
     </div>
 
-    <!-- Estado Principal - DINAMICO -->
+    <!-- Estado Principal -->
     <div class="status-card" [class.active]="isConnected" [class.disconnected]="!isConnected">
       <div class="status-icon-container">
         <div class="pulse-ring" *ngIf="isConnected"></div>
@@ -28,7 +27,7 @@
           <ion-icon [name]="isConnected ? 'backpack' : 'power-outline'"></ion-icon>
         </div>
       </div>
-      
+
       <div class="status-info">
         <h2 class="status-title">{{ isConnected ? 'Mochila Encendida' : 'Mochila Apagada' }}</h2>
         <p class="status-subtitle">{{ isConnected ? 'Conectada y monitoreando' : 'Dispositivo desconectado' }}</p>
@@ -47,6 +46,7 @@
     </div>
 
     <div class="data-cards-grid">
+
       <!-- Peso Card -->
       <div class="data-card" [class.card-disabled]="!isConnected">
         <div class="data-icon weight">
@@ -54,7 +54,7 @@
         </div>
         <div class="data-info">
           <p class="data-label">Peso actual</p>
-          <h3 class="data-value">{{ isConnected ? '5.2' : '0.0' }} <span>kg</span></h3>
+          <h3 class="data-value">{{ pesoDisplay }}</h3>
         </div>
       </div>
 
@@ -90,9 +90,10 @@
           <h3 class="data-value">{{ altitud | number:'1.0-0' }} <span>m</span></h3>
         </div>
       </div>
+
     </div>
 
-    <!-- Última Actualización - DINÁMICO -->
+    <!-- Última Actualización -->
     <div class="last-update" [class.update-offline]="!isConnected">
       <ion-icon [name]="isConnected ? 'sync-outline' : 'close-circle-outline'"></ion-icon>
       <span>{{ isConnected ? 'Última actualización: ' + lastUpdateText : 'Sin conexión' }}</span>
