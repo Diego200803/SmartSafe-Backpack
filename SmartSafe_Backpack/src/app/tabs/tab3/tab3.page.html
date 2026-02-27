@@ -18,6 +18,19 @@
       <p class="subtitle">Lunes a Viernes • 7:00 AM - 12:45 PM</p>
     </div>
 
+    <!-- Estado de conexión ESP32 -->
+    <div class="connection-bar" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+      <div class="connection-left">
+        <div class="connection-dot" [class.dot-on]="isConnected" [class.dot-off]="!isConnected"></div>
+        <ion-icon [name]="isConnected ? 'radio' : 'radio-outline'"></ion-icon>
+        <span>{{ isConnected ? 'Esperando ingreso de cuadernos...' : 'Mochila desconectada' }}</span>
+      </div>
+      <div class="connection-right">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ lastUpdateText }}</span>
+      </div>
+    </div>
+
     <!-- Horario Grid -->
     <div class="schedule-grid">
       <div class="schedule-header time-col">Hora</div>
@@ -104,7 +117,7 @@
     </div>
 
     <!-- Cuadernos Section -->
-    <div class="forgotten-section">
+    <div class="forgotten-section" [class.section-disabled]="!isConnected">
       <div class="section-header">
         <ion-icon name="scan-circle"></ion-icon>
         <h3>Cuadernos del día</h3>
@@ -138,6 +151,14 @@
       <!-- Mensaje de estado general -->
       <div class="mensaje-estado">
         <p>{{ mensajeEstado }}</p>
+      </div>
+
+      <!-- Botón reiniciar escaneo -->
+      <div class="reiniciar-container">
+        <ion-button expand="block" fill="outline" color="warning" (click)="reiniciarEscaneo()" class="reiniciar-btn" [disabled]="!isConnected">
+          <ion-icon name="refresh-circle-outline" slot="start"></ion-icon>
+          Reiniciar Escaneo de Cuadernos
+        </ion-button>
       </div>
 
       <!-- Fin de semana -->

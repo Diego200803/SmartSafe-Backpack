@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Database, ref, onValue } from '@angular/fire/database';
 
 @Component({
@@ -15,6 +15,15 @@ export class Tab3Page implements OnInit {
   mensajeEstado: string = '';
   ultimoIngresado: string = '';
 
+// 🔥 Estados de conexión ESP32
+isConnected: boolean = false;
+lastDataUpdate: number = 0;
+lastUpdateText: string = 'Esperando...';
+private monitoringInterval: any;
+private readonly CONNECTION_TIMEOUT = 8000;
+private readonly DISCONNECT_CONFIRMATION = 12000;
+private disconnectionStartTime: number = 0;
+
   readonly uidsConocidos: string[] = [
     '3:8:84:a9'
   ];
@@ -27,13 +36,69 @@ export class Tab3Page implements OnInit {
     'Viernes':   ['Estudios Sociales', 'Lengua y Literatura', 'Orientación', 'Religión', 'Matemáticas']
   };
 
-  constructor(private db: Database) {}
+  constructor(private db: Database, private zone: NgZone) {}
 
   ngOnInit() {
     this.detectarDia();
-    this.cargarCuadernosGuardados(); // 🔥 cargar desde localStorage
+    this.cargarCuadernosGuardados();
     this.escucharFirebase();
+    this.startMonitoring();
     this.programarActualizacionMedianoche();
+  }
+
+  ngOnDestroy() {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval);
+    }
+  }
+
+  // 🔥 Monitoreo de conexión
+  startMonitoring() {
+    this.monitoringInterval = setInterval(() => {
+      this.checkConnectionStatus();
+      this.updateLastUpdateText();
+    }, 1000);
+  }
+
+  checkConnectionStatus() {
+    const now = Date.now();
+    const timeSinceLastData = now - this.lastDataUpdate;
+
+    if (timeSinceLastData < this.CONNECTION_TIMEOUT) {
+      this.disconnectionStartTime = 0;
+      if (!this.isConnected) {
+        this.isConnected = true;
+      }
+      return;
+    }
+
+    if (!this.isConnected) return;
+
+    if (this.disconnectionStartTime === 0) {
+      this.disconnectionStartTime = now;
+      return;
+    }
+
+    const timeDisconnected = now - this.disconnectionStartTime;
+    if (timeDisconnected >= this.DISCONNECT_CONFIRMATION) {
+      this.isConnected = false;
+      this.disconnectionStartTime = 0;
+    }
+  }
+
+  updateLastUpdateText() {
+    if (!this.isConnected) {
+      this.lastUpdateText = 'ESP32 desconectado';
+      return;
+    }
+    if (this.lastDataUpdate === 0) {
+      this.lastUpdateText = 'Esperando datos...';
+      return;
+    }
+    const timeDiff = Math.floor((Date.now() - this.lastDataUpdate) / 1000);
+    if (timeDiff < 2) this.lastUpdateText = 'ahora mismo';
+    else if (timeDiff < 60) this.lastUpdateText = 'hace ' + timeDiff + ' seg';
+    else this.lastUpdateText = 'hace ' + Math.floor(timeDiff / 60) + ' min';
   }
 
   detectarDia() {
@@ -44,80 +109,97 @@ export class Tab3Page implements OnInit {
     this.actualizarMensaje();
   }
 
-  // 🔥 Cargar cuadernos guardados del día actual
   cargarCuadernosGuardados() {
     const hoyKey = this.getDiaKey();
     const guardados = localStorage.getItem('cuadernos_' + hoyKey);
-
     if (guardados) {
       this.cuadernosIngresados = JSON.parse(guardados);
     } else {
       this.cuadernosIngresados = [];
     }
-
     this.actualizarMensaje();
   }
 
-  // 🔥 Guardar cuadernos en localStorage
   guardarCuadernos() {
     const hoyKey = this.getDiaKey();
     localStorage.setItem('cuadernos_' + hoyKey, JSON.stringify(this.cuadernosIngresados));
   }
 
-  // 🔥 Clave única por día (ej: "2026-02-20")
   getDiaKey(): string {
     const hoy = new Date();
     return `${hoy.getFullYear()}-${hoy.getMonth() + 1}-${hoy.getDate()}`;
   }
 
-  escucharFirebase() {
-    const nfcRef = ref(this.db, '/NFC');
-    onValue(nfcRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data || !data.detectada) return;
+  // 🔥 Botón reiniciar escaneo
+  reiniciarEscaneo() {
+    this.cuadernosIngresados = [];
+    this.ultimoIngresado = '';
+    this.guardarCuadernos();
+    this.actualizarMensaje();
+  }
 
-      const uid = data.UID?.toLowerCase();
-      if (!this.uidsConocidos.includes(uid)) return;
-
-      const primerMateria = this.materiasHoy[0];
-      if (!primerMateria) return;
-
-      if (!this.cuadernosIngresados.includes(primerMateria)) {
-        this.cuadernosIngresados.push(primerMateria);
-        this.guardarCuadernos(); // 🔥 guardar inmediatamente
-        this.ultimoIngresado = `✅ Cuaderno de ${primerMateria} ingresado con éxito`;
-        this.actualizarMensaje();
-
-        setTimeout(() => {
-          this.ultimoIngresado = '';
-        }, 3000);
+escucharFirebase() {
+  // 🔥 Heartbeat exclusivo del NFC para detectar si ESP32 está prendido
+  const heartbeatRef = ref(this.db, '/NFC/heartbeat');
+  onValue(heartbeatRef, (snapshot) => {
+    const heartbeat = snapshot.val();
+    this.zone.run(() => {
+      if (heartbeat && heartbeat > 0) {
+        this.lastDataUpdate = Date.now();
       }
     });
-  }
+  });
+
+  // 🔥 Escuchar tarjeta NFC
+  const nfcRef = ref(this.db, '/NFC/detectada');
+  onValue(nfcRef, (snapshot) => {
+    this.zone.run(() => {
+      const detectada = snapshot.val();
+      if (!detectada) return;
+
+      // Leer UID cuando hay tarjeta
+      const uidRef = ref(this.db, '/NFC/UID');
+      onValue(uidRef, (uidSnapshot) => {
+        this.zone.run(() => {
+          const uid = uidSnapshot.val()?.toLowerCase();
+          if (!this.uidsConocidos.includes(uid)) return;
+
+          const primerMateria = this.materiasHoy[0];
+          if (!primerMateria) return;
+
+          if (!this.cuadernosIngresados.includes(primerMateria)) {
+            this.cuadernosIngresados.push(primerMateria);
+            this.guardarCuadernos();
+            this.ultimoIngresado = `✅ Cuaderno de ${primerMateria} ingresado con éxito`;
+            this.actualizarMensaje();
+            setTimeout(() => { this.ultimoIngresado = ''; }, 3000);
+          }
+        });
+      }, { onlyOnce: true });
+    });
+  });
+}
 
   programarActualizacionMedianoche() {
     const ahora = new Date();
     const medianoche = new Date();
     medianoche.setHours(24, 0, 0, 0);
-
     const msHastaMedianoche = medianoche.getTime() - ahora.getTime();
 
     setTimeout(() => {
       this.detectarDia();
       this.cuadernosIngresados = [];
-      this.guardarCuadernos(); // 🔥 limpiar también en localStorage
+      this.guardarCuadernos();
       this.programarActualizacionMedianoche();
     }, msHastaMedianoche);
   }
 
   actualizarMensaje() {
     const esFinde = this.diaHoy === 'Sábado' || this.diaHoy === 'Domingo';
-
     if (esFinde) {
       this.mensajeEstado = '🌅 ¡Es fin de semana! No hay clases hoy';
       return;
     }
-
     const pendientes = this.getCuadernosPendientes();
     if (pendientes.length === 0) {
       this.mensajeEstado = '🎒 ¡Todo listo para el día de hoy!';

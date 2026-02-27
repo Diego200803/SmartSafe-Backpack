@@ -36,7 +36,7 @@
           </ion-icon>
           
           <!-- 🔥 Texto según estado -->
-          <span *ngIf="!isConnected">ESP32 Desconectado</span>
+          <span *ngIf="!isConnected">Mochila Desconectada</span>
           <span *ngIf="isConnected && isSearchingGPS">Buscando Satélites...</span>
           <span *ngIf="isConnected && hasGPSFix">GPS con FIX</span>
         </div>
@@ -89,7 +89,7 @@
         </ion-icon>
         
         <h3>
-          {{ !isConnected ? 'ESP32 Desconectado' : (isSearchingGPS ? 'Esperando FIX GPS' : 'Ubicación Actual') }}
+          {{ !isConnected ? 'Mochila Desconectada' : (isSearchingGPS ? 'Esperando FIX GPS' : 'Ubicación Actual') }}
         </h3>
       </div>
       

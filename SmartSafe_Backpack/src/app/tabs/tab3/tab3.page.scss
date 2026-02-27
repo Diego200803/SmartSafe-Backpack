@@ -152,6 +152,7 @@ ion-content {
   padding: 24px 20px;
   margin-bottom: 20px;
   animation: fadeInUp 0.6s ease-out 0.4s both;
+  transition: all 0.3s ease;
 }
 .section-header {
   display: flex;
@@ -248,7 +249,7 @@ ion-content {
   p { color: white; font-size: 15px; font-weight: 600; margin: 0; }
 }
 
-/* Empty State (fin de semana o sin clases) */
+/* Empty State */
 .empty-state {
   text-align: center;
   padding: 40px 20px;
@@ -302,13 +303,16 @@ ion-content {
   0%, 100% { transform: translateY(0) scale(1);    opacity: 0.15; }
   50%       { transform: translateY(-30px) scale(1.1); opacity: 0.25; }
 }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
   .schedule-grid { grid-template-columns: 60px repeat(5, minmax(80px, 1fr)); }
   .subject-name { font-size: 10px; }
 }
-
 @media (max-width: 500px) {
   .schedule-container { padding-left: 8px; padding-right: 8px; }
   .header-section { margin-bottom: 20px; }
@@ -330,11 +334,119 @@ ion-content {
   .mensaje-exito { padding: 10px 12px; }
   .dia-hoy { font-size: 13px; }
 }
-
 @media (max-width: 380px) {
   .schedule-grid { grid-template-columns: 50px repeat(5, minmax(70px, 1fr)); }
   .time-cell { font-size: 8px; }
   .subject-name { font-size: 8px; }
   .schedule-header { font-size: 9px; padding: 6px 2px; }
   .class-cell { min-height: 40px; }
+}
+
+/* ============ CONEXIÓN ESP32 ============ */
+.connection-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid;
+  margin-bottom: 20px;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  animation: slideDown 0.6s ease-out;
+}
+.connection-bar.connected {
+  background: rgba(0, 255, 136, 0.05);
+  border-color: rgba(0, 255, 136, 0.3);
+}
+.connection-bar.disconnected {
+  background: rgba(255, 100, 100, 0.05);
+  border-color: rgba(255, 100, 100, 0.3);
+}
+.connection-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.connection-left ion-icon { font-size: 20px; }
+.connected .connection-left ion-icon { color: #00ff88; }
+.disconnected .connection-left ion-icon { color: #ff6464; }
+.connection-left span { font-size: 14px; font-weight: 600; }
+.connected .connection-left span { color: #00ff88; }
+.disconnected .connection-left span { color: #ff6464; }
+.connection-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.connection-right ion-icon { font-size: 14px; color: rgba(255, 255, 255, 0.5); }
+.connection-right span { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+/* Punto parpadeante */
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot-on {
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88;
+  animation: blink 2s infinite;
+}
+.dot-off {
+  background: #ff6464;
+  box-shadow: 0 0 8px #ff6464;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ============ BOTÓN REINICIAR ============ */
+.reiniciar-container { margin-top: 16px; }
+.reiniciar-btn {
+  --border-radius: 14px;
+  --border-color: rgba(255, 170, 0, 0.5);
+  --color: #ffaa00;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+/* ============ ESTADO DESCONECTADO ============ */
+.forgotten-section.section-disabled {
+  border-color: rgba(100, 100, 100, 0.3);
+  background: rgba(100, 100, 100, 0.03);
+  pointer-events: none;
+}
+.section-disabled .section-header ion-icon {
+  color: rgba(255, 255, 255, 0.3);
+}
+.section-disabled .section-header h3 {
+  color: rgba(255, 255, 255, 0.3);
+}
+.section-disabled .dia-hoy {
+  color: rgba(255, 255, 255, 0.3);
+  ion-icon { color: rgba(255, 255, 255, 0.3); }
+  strong { color: rgba(255, 255, 255, 0.3); }
+}
+.section-disabled .materia-item {
+  background: rgba(100, 100, 100, 0.08) !important;
+  border-color: rgba(100, 100, 100, 0.2) !important;
+  color: rgba(255, 255, 255, 0.25) !important;
+  ion-icon { color: rgba(255, 255, 255, 0.25) !important; }
+}
+.section-disabled .badge-estado {
+  background: rgba(100, 100, 100, 0.15) !important;
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+.section-disabled .mensaje-estado {
+  background: rgba(100, 100, 100, 0.08);
+  border-color: rgba(100, 100, 100, 0.2);
+  p { color: rgba(255, 255, 255, 0.3); }
+}
+.section-disabled .reiniciar-btn {
+  --border-color: rgba(100, 100, 100, 0.3);
+  --color: rgba(255, 255, 255, 0.25);
+  opacity: 0.4;
 }
