@@ -13,15 +13,12 @@
 // ================= HX711 =================
 #define DT 25
 #define SCK 26
-#define UMBRAL_ACTIVACION 300.0
-#define UMBRAL_CAIDA 400.0
-#define UMBRAL_RETORNO 150.0
 
 HX711 balanza;
-float factor_calibracion;
+
+float calibration_factor = -93965.0;
+float peso_base = 0.113;  
 bool calibrado = false;
-bool pesoActivo = false;
-float ultimoPeso = 0;
 
 // ================= PINS BMP280 =================
 #define SDA_PIN 19
@@ -87,20 +84,14 @@ void setup() {
   neogps.begin(9600, SERIAL_8N1, RXD2, TXD2);
 
   Serial.println("Iniciando HX711...");
-  EEPROM.begin(512);
   balanza.begin(DT, SCK);
 
   if (esperarHX711()) {
-    EEPROM.get(0, factor_calibracion);
-    if (factor_calibracion != 0 && !isnan(factor_calibracion)) {
-      balanza.set_scale(factor_calibracion);
-      delay(5000);
-      balanza.tare();
-      delay(1000);
-      balanza.tare();
-      calibrado = true;
-      Serial.println("HX711 BLOQUEADO EN 0");
-    }
+    balanza.set_scale(calibration_factor);
+    delay(2000);
+    balanza.tare();
+    calibrado = true;
+    Serial.println("Balanza lista.");
   }
 
   Serial.println("Sistema iniciado");
@@ -109,7 +100,7 @@ void setup() {
 // ================= LOOP =================
 void loop() {
 
-  // Leer GPS durante 500ms para capturar tramas NMEA completas
+  // ================= GPS =================
   unsigned long gpsStart = millis();
   while (millis() - gpsStart < 500) {
     while (neogps.available()) {
@@ -117,32 +108,15 @@ void loop() {
     }
   }
 
-  // ================= HX711 =================
+  // ================= HX711 NUEVA LÓGICA =================
   float peso = 0;
 
   if (calibrado && balanza.is_ready()) {
-    float lectura = balanza.get_units(6);
-    if (lectura < 0) lectura = 0;
 
-    if (!pesoActivo && lectura > UMBRAL_ACTIVACION) {
-      pesoActivo = true;
-    }
+    peso = balanza.get_units(10);
+    peso = peso - peso_base;
 
-    if (pesoActivo) {
-      if ((ultimoPeso - lectura) > UMBRAL_CAIDA) {
-        pesoActivo = false;
-        balanza.tare();
-        lectura = 0;
-      } else if (lectura < UMBRAL_RETORNO) {
-        pesoActivo = false;
-        balanza.tare();
-        lectura = 0;
-      }
-      peso = pesoActivo ? lectura : 0;
-    } else {
-      peso = 0;
-    }
-    ultimoPeso = lectura;
+    if (peso < 0) peso = 0;
   }
 
   // ================= NFC =================
@@ -179,7 +153,6 @@ void loop() {
   // ================= FIREBASE =================
   if (Firebase.ready()) {
 
-    // GPS - una sola escritura JSON
     FirebaseJson gpsJson;
     gpsJson.set("latitud",   latitude);
     gpsJson.set("longitud",  longitude);
@@ -190,7 +163,6 @@ void loop() {
     gpsJson.set("heartbeat", (int)heartbeat);
     Firebase.RTDB.setJSON(&fbdo, "/GPS", &gpsJson);
 
-    // BMP280 - una sola escritura JSON
     FirebaseJson bmpJson;
     bmpJson.set("temperatura", temperatura);
     bmpJson.set("presion",     presion);
@@ -198,19 +170,16 @@ void loop() {
     bmpJson.set("lastUpdate",  (int)heartbeat);
     Firebase.RTDB.setJSON(&fbdo, "/BMP280", &bmpJson);
 
-    // NFC - una sola escritura JSON
-// NFC - una sola escritura JSON
-FirebaseJson nfcJson;
-nfcJson.set("detectada", tarjetaDetectada);
-nfcJson.set("UID",       tarjetaDetectada ? uidString : "---");
-nfcJson.set("lastScan",  tarjetaDetectada ? (int)heartbeat : 0);
-nfcJson.set("heartbeat", (int)heartbeat); // 🔥 Heartbeat propio del NFC
-Firebase.RTDB.setJSON(&fbdo, "/NFC", &nfcJson);
+    FirebaseJson nfcJson;
+    nfcJson.set("detectada", tarjetaDetectada);
+    nfcJson.set("UID",       tarjetaDetectada ? uidString : "---");
+    nfcJson.set("lastScan",  tarjetaDetectada ? (int)heartbeat : 0);
+    nfcJson.set("heartbeat", (int)heartbeat);
+    Firebase.RTDB.setJSON(&fbdo, "/NFC", &nfcJson);
 
-    // HX711 - una sola escritura JSON
     FirebaseJson hxJson;
-    hxJson.set("peso",       peso);
-    hxJson.set("activo",     pesoActivo);
+    hxJson.set("peso_kg",    peso);
+    hxJson.set("peso_g",     peso * 1000.0);
     hxJson.set("calibrado",  calibrado);
     hxJson.set("lastUpdate", (int)heartbeat);
     Firebase.RTDB.setJSON(&fbdo, "/HX711", &hxJson);
@@ -220,29 +189,22 @@ Firebase.RTDB.setJSON(&fbdo, "/NFC", &nfcJson);
 
   // ================= SERIAL =================
   Serial.println("--------------------------------------------");
-  Serial.print("GPS | FIX: ");
-  Serial.print(gpsFix ? "SI" : "NO");
-  Serial.print(" | SAT: ");
-  Serial.print(satellites);
-  Serial.print(" | LAT: ");
-  Serial.print(latitude, 6);
-  Serial.print(" | LNG: ");
-  Serial.println(longitude, 6);
-  Serial.print("BMP | Temp: ");
-  Serial.print(temperatura, 1);
-  Serial.print("C | Presion: ");
-  Serial.print(presion, 1);
-  Serial.print(" hPa | Alt: ");
-  Serial.print(altitudBMP, 1);
-  Serial.println(" m");
-  Serial.print("HX711 | Peso: ");
-  Serial.print(peso, 1);
-  Serial.print(" g | Estado: ");
-  Serial.println(pesoActivo ? "ACTIVO" : "REPOSO");
+
+  Serial.print("HX711 | ");
+  if (peso < 1.0) {
+    Serial.print(peso * 1000.0, 1);
+    Serial.println(" g");
+  } else {
+    Serial.print(peso, 3);
+    Serial.println(" kg");
+  }
+
   Serial.print("NFC | ");
   Serial.println(tarjetaDetectada ? "Tarjeta: " + uidString : "Sin tarjeta");
+
   Serial.print("Firebase | ");
   Serial.println(envioOK ? "Envio OK" : "ERROR");
+
   Serial.println("--------------------------------------------");
 
   delay(1500);
