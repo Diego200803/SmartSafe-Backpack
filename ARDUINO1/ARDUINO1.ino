@@ -39,8 +39,8 @@ HardwareSerial neogps(1);
 TinyGPSPlus gps;
 
 // ================= WiFi =================
-const char* WIFI_SSID = "A36D";
-const char* WIFI_PASSWORD = "12345678";
+const char* WIFI_SSID = "Maria_Eugenia_Rea";
+const char* WIFI_PASSWORD = "este06dieg087";
 
 // ================= Firebase =================
 const char* API_KEY = "AIzaSyCzbr7xVWPI__gHan0C0AuVcjm4EWJLSOw";

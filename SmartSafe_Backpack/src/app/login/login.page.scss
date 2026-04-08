@@ -1,18 +1,19 @@
 ion-content {
   --background: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1b2e 100%);
+  --overflow: auto; /* ← clave: permite scroll cuando aparece el teclado */
   position: relative;
-  overflow: hidden;
 }
 
 .login-container {
-  height: 100%;
+  min-height: 100%;         /* ← min-height en vez de height fija */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 80px 20px 20px;  /* ← padding-top para el back-button */
   position: relative;
   z-index: 2;
+  box-sizing: border-box;
 }
 
 /* 🔙 Botón de Retroceso */
@@ -47,38 +48,39 @@ ion-content {
 /* Header Section */
 .header-section {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   animation: fadeInDown 0.6s ease-out;
+  width: 100%;
 }
 
 .logo-circle {
-  width: 100px;
-  height: 100px;
+  width: 80px;              /* ← ligeramente más pequeño en móvil */
+  height: 80px;
   background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
+  margin: 0 auto 16px;
   box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
   animation: pulse 2s infinite;
 }
 
 .logo-circle ion-icon {
-  font-size: 50px;
+  font-size: 40px;
   color: white;
 }
 
 .welcome-text {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: white;
-  margin: 10px 0;
+  margin: 8px 0;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
-  font-size: 16px;
+  font-size: 15px;
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
@@ -92,7 +94,7 @@ ion-content {
 
 .input-group {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -101,6 +103,7 @@ ion-content {
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
+  min-height: 52px;         /* ← altura mínima para tap fácil en móvil */
 }
 
 .input-group:focus-within {
@@ -113,6 +116,7 @@ ion-content {
   font-size: 22px;
   color: #00d4ff;
   margin-right: 12px;
+  flex-shrink: 0;           /* ← evita que el ícono se comprima */
 }
 
 .custom-input {
@@ -121,7 +125,9 @@ ion-content {
   --placeholder-color: rgba(255, 255, 255, 0.5);
   --padding-start: 0;
   --padding-end: 0;
+  --min-height: 44px;       /* ← altura mínima accesible en móvil */
   flex: 1;
+  font-size: 16px;          /* ← 16px evita zoom automático en iOS */
 }
 
 .eye-icon {
@@ -129,6 +135,8 @@ ion-content {
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: color 0.3s;
+  padding: 8px;             /* ← área de tap más grande */
+  flex-shrink: 0;
 }
 
 .eye-icon:hover {
@@ -146,7 +154,8 @@ ion-content {
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.5px;
-  margin-bottom: 24px;
+  margin-top: 8px;
+  margin-bottom: 20px;
   transition: transform 0.2s;
 }
 
@@ -157,7 +166,7 @@ ion-content {
 /* Registro */
 .register-section {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .register-section p {
@@ -176,6 +185,11 @@ ion-content {
 
 .register-section a:hover {
   color: #00b8e6;
+}
+
+/* ← Espaciado extra para que el teclado no tape el contenido */
+.keyboard-spacer {
+  height: 40px;
 }
 
 /* Background Decoration */
@@ -224,25 +238,13 @@ ion-content {
 
 /* Animations */
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse {
@@ -257,12 +259,23 @@ ion-content {
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    opacity: 0.3;
+  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.3; }
+  50%       { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
+}
+
+/* ── Responsive: pantallas pequeñas (≤360px) ── */
+@media (max-width: 360px) {
+  .logo-circle {
+    width: 64px;
+    height: 64px;
   }
-  50% {
-    transform: translateY(-20px) scale(1.1);
-    opacity: 0.5;
+  .logo-circle ion-icon {
+    font-size: 32px;
+  }
+  .welcome-text {
+    font-size: 24px;
+  }
+  .header-section {
+    margin-bottom: 24px;
   }
 }

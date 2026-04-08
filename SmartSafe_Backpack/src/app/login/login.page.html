@@ -1,10 +1,18 @@
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" [scrollY]="true">
+
+  <!-- Decoración de fondo -->
+  <div class="background-decoration">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+  </div>
+
+  <!-- 🔙 Botón de Retroceso -->
+  <div class="back-button" routerLink="/pagina-inicio">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </div>
+
   <div class="login-container">
-    
-    <!-- 🔙 Botón de Retroceso -->
-    <div class="back-button" routerLink="/pagina-inicio">
-      <ion-icon name="arrow-back-outline"></ion-icon>
-    </div>
 
     <!-- Logo y Header -->
     <div class="header-section">
@@ -17,28 +25,32 @@
 
     <!-- Formulario -->
     <div class="login-form">
+
       <!-- Email Input -->
       <div class="input-group">
         <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-        <ion-input 
-          type="email" 
-          placeholder="Correo electrónico" 
-          class="custom-input" 
-          [(ngModel)]="email">
+        <ion-input
+          type="email"
+          placeholder="Correo electrónico"
+          class="custom-input"
+          [(ngModel)]="email"
+          inputmode="email"
+          autocomplete="email">
         </ion-input>
       </div>
 
       <!-- Password Input -->
       <div class="input-group">
         <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-input 
-          [type]="showPassword ? 'text' : 'password'" 
-          placeholder="Contraseña" 
+        <ion-input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Contraseña"
           class="custom-input"
-          [(ngModel)]="password">
+          [(ngModel)]="password"
+          autocomplete="current-password">
         </ion-input>
-        <ion-icon 
-          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+        <ion-icon
+          [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
           class="eye-icon"
           (click)="togglePasswordVisibility()">
         </ion-icon>
@@ -53,13 +65,10 @@
       <div class="register-section">
         <p>¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a></p>
       </div>
-    </div>
 
-    <!-- Decoración de fondo -->
-    <div class="background-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
+      <!-- Espaciado extra al final para teclado en móvil -->
+      <div class="keyboard-spacer"></div>
+
     </div>
   </div>
 </ion-content>
