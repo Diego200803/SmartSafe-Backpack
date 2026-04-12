@@ -6,6 +6,7 @@ import { ProfilePopoverComponent } from './profile-popover.component';
 import { getDatabase, ref, onValue } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   standalone: false,
@@ -27,6 +28,13 @@ export class Tab1Page implements OnInit, OnDestroy {
   // HX711
   peso: number = 0;
 
+  // UV OpenWeather
+  uvIndex: number = 0;
+  uvLevel: string = 'Sin datos';
+  uvColor: string = '#888';
+  uvLoading: boolean = true;
+  cityName: string = '';
+
   // Sistema de conexión
   isConnected: boolean = false;
   lastDataUpdate: number = 0;
@@ -35,31 +43,105 @@ export class Tab1Page implements OnInit, OnDestroy {
   private connectionHistory: boolean[] = [];
   private readonly BUFFER_SIZE = 8;
   private monitoringInterval: any;
+  private uvInterval: any;
   private readonly DATA_TIMEOUT = 5000;
   private readonly QUICK_RECONNECT = 2;
   private readonly STABLE_DISCONNECT = 6;
   private consecutiveSuccess: number = 0;
 
+  private readonly OPENWEATHER_KEY = '1bf9772e66b038c7e9f7b3d8de4124b2';
+
   constructor(
     private firebaseService: FirebaseService,
     private popoverController: PopoverController,
     private alertController: AlertController,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) { }
 
   ngOnInit() {
     this.loadUserData();
     this.initializeFirebaseListeners();
     this.startMonitoring();
+    this.loadUVIndex();
+    // Actualiza UV cada 10 minutos
+    this.uvInterval = setInterval(() => this.loadUVIndex(), 10 * 60 * 1000);
   }
 
   ngOnDestroy() {
-    if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval);
+    if (this.monitoringInterval) clearInterval(this.monitoringInterval);
+    if (this.uvInterval) clearInterval(this.uvInterval);
+  }
+
+  // ── UV ──────────────────────────────────────────────
+  loadUVIndex() {
+    this.uvLoading = true;
+    if (!navigator.geolocation) {
+      this.uvLevel = 'No disponible';
+      this.uvLoading = false;
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        this.fetchUV(lat, lon);
+      },
+      (error) => {
+        console.warn('Geolocalización denegada, usando Cuenca EC por defecto');
+        // Coordenadas por defecto: Cuenca, Ecuador
+        this.fetchUV(-2.9001, -79.0059);
+      },
+      { timeout: 8000 }
+    );
+  }
+
+fetchUV(lat: number, lon: number) {
+  // Endpoint gratuito de UV
+  const url = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}`;
+
+  this.http.get<any>(url).subscribe({
+    next: (data) => {
+      this.uvIndex = Math.round(data.value);
+      this.setUVLevel(this.uvIndex);
+      this.uvLoading = false;
+
+      // Obtener ciudad por separado
+      const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
+      this.http.get<any>(cityUrl).subscribe({
+        next: (cityData) => { this.cityName = cityData.name || ''; },
+        error: () => { this.cityName = ''; }
+      });
+    },
+    error: (err) => {
+      console.error('Error UV:', err);
+      this.uvLevel = 'Error';
+      this.uvLoading = false;
+    }
+  });
+}
+
+  setUVLevel(uvi: number) {
+    if (uvi <= 2) {
+      this.uvLevel = 'Bajo';
+      this.uvColor = '#00c853';
+    } else if (uvi <= 5) {
+      this.uvLevel = 'Moderado';
+      this.uvColor = '#ffd600';
+    } else if (uvi <= 7) {
+      this.uvLevel = 'Alto';
+      this.uvColor = '#ff6d00';
+    } else if (uvi <= 10) {
+      this.uvLevel = 'Muy alto';
+      this.uvColor = '#dd2c00';
+    } else {
+      this.uvLevel = 'Extremo';
+      this.uvColor = '#aa00ff';
     }
   }
 
-  // Getter para formatear el peso: >=1000g → X,X kg | <1000g → XXX g
+  // ── Getter peso ──────────────────────────────────────
   get pesoDisplay(): string {
     if (!this.isConnected || this.peso === 0) return '0 g';
     if (this.peso >= 1000) {
@@ -68,6 +150,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     return Math.round(this.peso) + ' g';
   }
 
+  // ── Firebase ─────────────────────────────────────────
   initializeFirebaseListeners() {
     const app = initializeApp(environment.firebaseConfig);
     const db = getDatabase(app);
@@ -107,7 +190,6 @@ export class Tab1Page implements OnInit, OnDestroy {
       }
     }, (error) => { console.error('❌ Error heartbeat:', error); });
 
-    // Listener peso HX711
     const pesoRef = ref(db, 'HX711/peso');
     onValue(pesoRef, (snapshot) => {
       const value = snapshot.val();

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http'; // ← nuevo
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
@@ -20,7 +21,8 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule, // ← nuevo
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

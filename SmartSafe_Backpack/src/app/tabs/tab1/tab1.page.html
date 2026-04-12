@@ -91,6 +91,22 @@
         </div>
       </div>
 
+      <!-- UV Card -->
+      <div class="data-card uv-card">
+        <div class="data-icon uv" [style.background]="uvColor + '22'" [style.border-color]="uvColor + '66'">
+          <ion-icon name="sunny-outline" [style.color]="uvColor"></ion-icon>
+        </div>
+        <div class="data-info">
+          <p class="data-label">Índice UV {{ cityName ? '· ' + cityName : '' }}</p>
+          <h3 class="data-value" *ngIf="!uvLoading">
+            {{ uvIndex }} <span [style.color]="uvColor">{{ uvLevel }}</span>
+          </h3>
+          <h3 class="data-value" *ngIf="uvLoading">
+            <span>Cargando...</span>
+          </h3>
+        </div>
+      </div>
+
     </div>
 
     <!-- Última Actualización -->

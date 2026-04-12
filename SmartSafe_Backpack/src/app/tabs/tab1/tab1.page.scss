@@ -580,3 +580,12 @@ ion-content {
 .data-icon.altitude ion-icon {
   color: #ffaa00;
 }
+/* UV Card */
+.data-icon.uv {
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+.uv-card .data-value span {
+  font-size: 13px;
+  font-weight: 600;
+}
