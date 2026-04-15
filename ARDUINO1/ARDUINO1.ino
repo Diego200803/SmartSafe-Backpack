@@ -7,29 +7,22 @@
 #include <Adafruit_BMP280.h>
 #include <TinyGPS++.h>
 #include <Adafruit_PN532.h>
-#include "HX711.h"
 #include <EEPROM.h>
 
-// ================= HX711 =================
-#define DT 25
-#define SCK 26
-
-HX711 balanza;
-
-float calibration_factor = -93965.0;
-float peso_base = 0.113;  
-bool calibrado = false;
-
 // ================= PINS BMP280 =================
-#define SDA_PIN 19
-#define SCL_PIN 21
+#define SDA_PIN 22
+#define SCL_PIN 23
 #define BMP_ADDRESS 0x76
 #define SEALEVELPRESSURE_HPA 1013.25
 
 Adafruit_BMP280 bmp;
 
 // ================= PN532 =================
-Adafruit_PN532 nfc(SDA_PIN, SCL_PIN);
+#define SDA_PIN2 19
+#define SCL_PIN2 21
+
+TwoWire I2C_NFC = TwoWire(1);
+Adafruit_PN532 nfc(SDA_PIN2, SCL_PIN2, &I2C_NFC);
 
 // ================= PINS GPS =================
 #define RXD2 16
@@ -55,15 +48,6 @@ FirebaseConfig config;
 // ================= PROTOTIPOS =================
 void setupWiFi();
 void setupFirebase();
-bool esperarHX711();
-
-bool esperarHX711() {
-  unsigned long inicio = millis();
-  while (!balanza.is_ready()) {
-    if (millis() - inicio > 5000) return false;
-  }
-  return true;
-}
 
 // ================= SETUP =================
 void setup() {
@@ -77,22 +61,12 @@ void setup() {
 
   if (!bmp.begin(BMP_ADDRESS)) while (1);
 
+  I2C_NFC.begin(SDA_PIN2, SCL_PIN2);
   nfc.begin();
   delay(500);
   if (nfc.getFirmwareVersion()) nfc.SAMConfig();
 
   neogps.begin(9600, SERIAL_8N1, RXD2, TXD2);
-
-  Serial.println("Iniciando HX711...");
-  balanza.begin(DT, SCK);
-
-  if (esperarHX711()) {
-    balanza.set_scale(calibration_factor);
-    delay(2000);
-    balanza.tare();
-    calibrado = true;
-    Serial.println("Balanza lista.");
-  }
 
   Serial.println("Sistema iniciado");
 }
@@ -106,17 +80,6 @@ void loop() {
     while (neogps.available()) {
       gps.encode(neogps.read());
     }
-  }
-
-  // ================= HX711 NUEVA LÓGICA =================
-  float peso = 0;
-
-  if (calibrado && balanza.is_ready()) {
-
-    peso = balanza.get_units(10);
-    peso = peso - peso_base;
-
-    if (peso < 0) peso = 0;
   }
 
   // ================= NFC =================
@@ -177,27 +140,11 @@ void loop() {
     nfcJson.set("heartbeat", (int)heartbeat);
     Firebase.RTDB.setJSON(&fbdo, "/NFC", &nfcJson);
 
-    FirebaseJson hxJson;
-    hxJson.set("peso_kg",    peso);
-    hxJson.set("peso_g",     peso * 1000.0);
-    hxJson.set("calibrado",  calibrado);
-    hxJson.set("lastUpdate", (int)heartbeat);
-    Firebase.RTDB.setJSON(&fbdo, "/HX711", &hxJson);
-
     envioOK = true;
   }
 
   // ================= SERIAL =================
   Serial.println("--------------------------------------------");
-
-  Serial.print("HX711 | ");
-  if (peso < 1.0) {
-    Serial.print(peso * 1000.0, 1);
-    Serial.println(" g");
-  } else {
-    Serial.print(peso, 3);
-    Serial.println(" kg");
-  }
 
   Serial.print("NFC | ");
   Serial.println(tarjetaDetectada ? "Tarjeta: " + uidString : "Sin tarjeta");

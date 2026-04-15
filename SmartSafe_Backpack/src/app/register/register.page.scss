@@ -11,7 +11,7 @@ ion-content {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  padding-top: 60px;
+  padding-top: 110px; /* ← subido de 60px a 110px */
   position: relative;
   z-index: 2;
 }
@@ -19,7 +19,7 @@ ion-content {
 /* Back Button */
 .back-button {
   position: absolute;
-  top: 20px;
+  top: 50px; /* ← subido de 20px a 50px */
   left: 20px;
   width: 40px;
   height: 40px;

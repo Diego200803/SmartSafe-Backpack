@@ -24,8 +24,8 @@ ion-content {
 
 .logo-ring {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 280px;      /* ← antes 200px */
+  height: 280px;     /* ← antes 200px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,8 +59,8 @@ ion-content {
 }
 
 .logo-circle {
-  width: 160px;
-  height: 160px;
+  width: 240px;      /* ← antes 160px */
+  height: 240px;     /* ← antes 160px */
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   border-radius: 50%;
@@ -90,37 +90,17 @@ ion-content {
 
 .logo-icon {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 200px;      /* ← antes 100px */
+  height: 200px;     /* ← antes 100px */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.logo-icon > ion-icon {
-  font-size: 80px;
-  color: #00d4ff;
-  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
-}
-
-.logo-badge {
-  position: absolute;
-  bottom: -5px;
-  right: -5px;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid #0a1628;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-}
-
-.logo-badge ion-icon {
-  font-size: 24px;
-  color: white;
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Welcome Text Section */
@@ -182,21 +162,6 @@ ion-content {
   overflow: hidden;
 }
 
-.primary-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s;
-}
-
-.primary-button:hover::before {
-  left: 100%;
-}
-
 .primary-button ion-icon {
   font-size: 22px;
   margin-right: 8px;
@@ -215,13 +180,6 @@ ion-content {
   background: rgba(0, 212, 255, 0.05);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-}
-
-.secondary-button:hover {
-  --border-color: rgba(0, 212, 255, 0.8);
-  background: rgba(0, 212, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
 }
 
 .secondary-button ion-icon {
@@ -354,15 +312,9 @@ ion-content {
 }
 
 @keyframes float-slow {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -30px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(30px, -30px) scale(1.1); }
+  66%       { transform: translate(-20px, 20px) scale(0.9); }
 }
 
 /* Grid Pattern */
@@ -381,67 +333,56 @@ ion-content {
 }
 
 @keyframes grid-move {
-  0% { transform: translate(0, 0); }
+  0%   { transform: translate(0, 0); }
   100% { transform: translate(50px, 50px); }
 }
 
 /* Animations */
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 /* Responsive */
 @media (max-height: 700px) {
-  .logo-section {
-    margin-bottom: 30px;
-  }
-  
   .logo-ring {
+    width: 220px;
+    height: 220px;
+  }
+
+  .logo-circle {
+    width: 190px;
+    height: 190px;
+  }
+
+  .logo-icon {
     width: 160px;
     height: 160px;
   }
-  
-  .logo-circle {
-    width: 130px;
-    height: 130px;
-  }
-  
-  .logo-icon > ion-icon {
-    font-size: 60px;
-  }
-  
-  .welcome-text-section {
-    margin-bottom: 30px;
-  }
-  
+
   .welcome-title {
     font-size: 24px;
   }
-  
+
   .brand-name {
     font-size: 28px;
+  }
+
+  .logo-section {
+    margin-bottom: 30px;
+  }
+
+  .welcome-text-section {
+    margin-bottom: 30px;
   }
 }

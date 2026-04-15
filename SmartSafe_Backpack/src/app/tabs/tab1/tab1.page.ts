@@ -7,6 +7,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   standalone: false,
@@ -56,7 +57,8 @@ export class Tab1Page implements OnInit, OnDestroy {
     private popoverController: PopoverController,
     private alertController: AlertController,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -64,7 +66,6 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.initializeFirebaseListeners();
     this.startMonitoring();
     this.loadUVIndex();
-    // Actualiza UV cada 10 minutos
     this.uvInterval = setInterval(() => this.loadUVIndex(), 10 * 60 * 1000);
   }
 
@@ -84,43 +85,45 @@ export class Tab1Page implements OnInit, OnDestroy {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        this.fetchUV(lat, lon);
+        this.fetchUV(position.coords.latitude, position.coords.longitude);
       },
-      (error) => {
+      () => {
         console.warn('Geolocalización denegada, usando Cuenca EC por defecto');
-        // Coordenadas por defecto: Cuenca, Ecuador
         this.fetchUV(-2.9001, -79.0059);
       },
       { timeout: 8000 }
     );
   }
 
-fetchUV(lat: number, lon: number) {
-  // Endpoint gratuito de UV
-  const url = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}`;
+  fetchUV(lat: number, lon: number) {
+    const url = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}`;
 
-  this.http.get<any>(url).subscribe({
-    next: (data) => {
-      this.uvIndex = Math.round(data.value);
-      this.setUVLevel(this.uvIndex);
-      this.uvLoading = false;
+    this.http.get<any>(url).subscribe({
+      next: (data) => {
+        this.uvIndex = Math.round(data.value);
+        this.setUVLevel(this.uvIndex);
+        this.uvLoading = false;
 
-      // Obtener ciudad por separado
-      const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
-      this.http.get<any>(cityUrl).subscribe({
-        next: (cityData) => { this.cityName = cityData.name || ''; },
-        error: () => { this.cityName = ''; }
-      });
-    },
-    error: (err) => {
-      console.error('Error UV:', err);
-      this.uvLevel = 'Error';
-      this.uvLoading = false;
-    }
-  });
-}
+        const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
+        this.http.get<any>(cityUrl).subscribe({
+          next: (cityData) => {
+            this.cityName = cityData.name || '';
+            // ← Notificación UV con ciudad ya cargada
+            this.notificationService.checkUV(this.uvIndex, this.cityName);
+          },
+          error: () => {
+            this.cityName = '';
+            this.notificationService.checkUV(this.uvIndex, '');
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error UV:', err);
+        this.uvLevel = 'Error';
+        this.uvLoading = false;
+      }
+    });
+  }
 
   setUVLevel(uvi: number) {
     if (uvi <= 2) {
@@ -208,6 +211,10 @@ fetchUV(lat: number, lon: number) {
     if (source !== 'heartbeat') {
       console.log('📡', source + ':', value);
     }
+    // ← Notificación temperatura
+    if (source === 'temperatura') {
+      this.notificationService.checkTemperatura(value);
+    }
   }
 
   startMonitoring() {
@@ -230,6 +237,7 @@ fetchUV(lat: number, lon: number) {
       if (!this.isConnected) {
         console.log('✅ ESP32 CONECTADO');
         this.isConnected = true;
+        this.notificationService.checkConexion(true); // ← conexión
       }
       return;
     }
@@ -243,11 +251,13 @@ fetchUV(lat: number, lon: number) {
           console.log('❌ ESP32 DESCONECTADO - Fallos:', failCount + '/' + this.BUFFER_SIZE);
           this.isConnected = false;
           this.resetSensorValues();
+          this.notificationService.checkConexion(false); // ← desconexión
         }
       } else if (successCount >= (this.BUFFER_SIZE - this.STABLE_DISCONNECT + 1)) {
         if (!this.isConnected) {
           console.log('✅ ESP32 CONECTADO (estable)');
           this.isConnected = true;
+          this.notificationService.checkConexion(true); // ← conexión estable
         }
       }
     }
@@ -290,16 +300,16 @@ fetchUV(lat: number, lon: number) {
 
   async loadUserData() {
     const currentUser = this.firebaseService.getCurrentUser();
+    console.log('👤 currentUser:', currentUser);
     if (currentUser) {
       this.userEmail = currentUser.email || '';
       if (currentUser.displayName) {
         this.userFullName = currentUser.displayName;
-        this.userName = this.getFirstName(currentUser.displayName);
       } else if (currentUser.email) {
         const userData = await this.firebaseService.getUserData(currentUser.email);
+        console.log('👤 userData:', userData);
         if (userData.success && userData.data) {
           this.userFullName = userData.data.nombre;
-          this.userName = this.getFirstName(userData.data.nombre);
         }
       }
     }
@@ -312,6 +322,7 @@ fetchUV(lat: number, lon: number) {
   }
 
   async presentPopover(event: any) {
+    await this.loadUserData();
     const popover = await this.popoverController.create({
       component: ProfilePopoverComponent,
       event: event,

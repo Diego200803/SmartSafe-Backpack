@@ -1,16 +1,16 @@
 ion-content {
   --background: linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1b2e 100%);
-  --overflow: auto; /* ← clave: permite scroll cuando aparece el teclado */
+  --overflow: auto;
   position: relative;
 }
 
 .login-container {
-  min-height: 100%;         /* ← min-height en vez de height fija */
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 80px 20px 20px;  /* ← padding-top para el back-button */
+  padding: 110px 20px 20px; /* ← subido de 80px a 110px */
   position: relative;
   z-index: 2;
   box-sizing: border-box;
@@ -19,7 +19,7 @@ ion-content {
 /* 🔙 Botón de Retroceso */
 .back-button {
   position: absolute;
-  top: 20px;
+  top: 50px; /* ← subido de 20px a 50px */
   left: 20px;
   width: 40px;
   height: 40px;
@@ -54,7 +54,7 @@ ion-content {
 }
 
 .logo-circle {
-  width: 80px;              /* ← ligeramente más pequeño en móvil */
+  width: 80px;
   height: 80px;
   background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
   border-radius: 50%;
@@ -103,7 +103,7 @@ ion-content {
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
-  min-height: 52px;         /* ← altura mínima para tap fácil en móvil */
+  min-height: 52px;
 }
 
 .input-group:focus-within {
@@ -116,7 +116,7 @@ ion-content {
   font-size: 22px;
   color: #00d4ff;
   margin-right: 12px;
-  flex-shrink: 0;           /* ← evita que el ícono se comprima */
+  flex-shrink: 0;
 }
 
 .custom-input {
@@ -125,9 +125,9 @@ ion-content {
   --placeholder-color: rgba(255, 255, 255, 0.5);
   --padding-start: 0;
   --padding-end: 0;
-  --min-height: 44px;       /* ← altura mínima accesible en móvil */
+  --min-height: 44px;
   flex: 1;
-  font-size: 16px;          /* ← 16px evita zoom automático en iOS */
+  font-size: 16px;
 }
 
 .eye-icon {
@@ -135,7 +135,7 @@ ion-content {
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: color 0.3s;
-  padding: 8px;             /* ← área de tap más grande */
+  padding: 8px;
   flex-shrink: 0;
 }
 
@@ -187,7 +187,6 @@ ion-content {
   color: #00b8e6;
 }
 
-/* ← Espaciado extra para que el teclado no tape el contenido */
 .keyboard-spacer {
   height: 40px;
 }
@@ -259,11 +258,11 @@ ion-content {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.3; }
+  0%, 100% { transform: translateY(0) scale(1);       opacity: 0.3; }
   50%       { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
 }
 
-/* ── Responsive: pantallas pequeñas (≤360px) ── */
+/* Responsive: pantallas pequeñas (≤360px) */
 @media (max-width: 360px) {
   .logo-circle {
     width: 64px;

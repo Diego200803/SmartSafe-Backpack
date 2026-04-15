@@ -2,8 +2,8 @@
   <ion-toolbar class="custom-toolbar">
     <ion-title class="toolbar-title">Inicio</ion-title>
     <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="notifications-outline"></ion-icon>
+      <ion-button (click)="presentPopover($event)">
+        <ion-icon name="person-circle-outline" class="profile-icon"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

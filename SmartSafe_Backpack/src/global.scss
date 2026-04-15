@@ -45,3 +45,112 @@
     background: transparent;
   }
 }
+/* Profile Popover Global */
+.profile-popover-class {
+  --background: transparent;
+  --box-shadow: none;
+  --width: min(320px, 85vw);
+  --max-width: min(320px, 85vw);
+
+  .popover-content {
+    background: transparent;
+    width: min(320px, 85vw) !important;
+    left: auto !important;
+    right: 8px !important;
+  }
+}
+
+app-profile-popover .profile-popover {
+  width: 100%;
+  background: rgba(15, 27, 46, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  overflow: hidden;
+}
+
+app-profile-popover .profile-header {
+  background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+  padding: 28px 24px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+app-profile-popover .avatar-circle {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 153, 255, 0.15) 100%);
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+app-profile-popover .avatar-circle ion-icon {
+  font-size: 42px;
+  color: #00d4ff;
+  display: block;
+  line-height: 1;
+}
+
+app-profile-popover .profile-info {
+  padding: 18px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+app-profile-popover .profile-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: normal;
+}
+
+app-profile-popover .profile-email {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  word-break: break-all;
+}
+
+app-profile-popover .profile-actions {
+  padding: 10px 12px 12px;
+}
+
+app-profile-popover .logout-button {
+  --color: #ff6464;
+  --background: rgba(255, 100, 100, 0.08);
+  --background-hover: rgba(255, 100, 100, 0.15);
+  --border-radius: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  margin: 0;
+  border: 1px solid rgba(255, 100, 100, 0.2);
+  border-radius: 12px;
+}
+
+app-profile-popover .logout-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+app-profile-popover .logout-content ion-icon {
+  font-size: 18px;
+  color: #ff6464;
+  flex-shrink: 0;
+}
+
+app-profile-popover .logout-content span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff6464;
+}
