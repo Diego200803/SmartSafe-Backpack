@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Capacitor } from '@capacitor/core';
 
 export interface AppNotification {
   id: string;
@@ -20,15 +22,24 @@ export class NotificationService {
   private notifications$ = new BehaviorSubject<AppNotification[]>([]);
   notifications = this.notifications$.asObservable();
 
-  // Control de notificaciones ya enviadas para no duplicar
-  private sentNotifications = new Set<string>();
-
-  // Cooldowns por tipo (ms)
-  private readonly COOLDOWN = 5 * 60 * 1000; // 5 minutos
+  private readonly COOLDOWN = 5 * 60 * 1000;
   private lastSent: { [key: string]: number } = {};
+  private notifIdCounter = 1;
+  private permissionGranted = false;
 
-  getNotifications(): AppNotification[] {
-    return this.notifications$.getValue();
+  constructor() {
+    this.requestPermissions();
+  }
+
+  async requestPermissions() {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
+      const result = await LocalNotifications.requestPermissions();
+      this.permissionGranted = result.display === 'granted';
+      console.log('🔔 Permisos notificaciones:', result.display);
+    } catch (e) {
+      console.warn('No se pudieron solicitar permisos:', e);
+    }
   }
 
   private canSend(key: string): boolean {
@@ -41,7 +52,7 @@ export class NotificationService {
     return false;
   }
 
-  private add(notif: Omit<AppNotification, 'id' | 'timestamp' | 'timeText'>) {
+  private async add(notif: Omit<AppNotification, 'id' | 'timestamp' | 'timeText'>) {
     const id = Date.now().toString();
     const newNotif: AppNotification = {
       ...notif,
@@ -49,8 +60,38 @@ export class NotificationService {
       timestamp: new Date(),
       timeText: 'Ahora mismo'
     };
+
     const current = this.notifications$.getValue();
     this.notifications$.next([newNotif, ...current]);
+
+    await this.sendSystemNotification(notif.title, notif.message);
+  }
+
+  private async sendSystemNotification(title: string, body: string) {
+    if (!Capacitor.isNativePlatform()) return;
+    if (!this.permissionGranted) {
+      await this.requestPermissions();
+      if (!this.permissionGranted) return;
+    }
+
+    try {
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: this.notifIdCounter++,
+            title,
+            body,
+            smallIcon: 'ic_stat_logo_app',  // ← actualizado
+            iconColor: '#00d4ff',
+            sound: undefined,
+            actionTypeId: '',
+            extra: null,
+          }
+        ]
+      });
+    } catch (e) {
+      console.warn('Error enviando notificación del sistema:', e);
+    }
   }
 
   remove(id: string) {
@@ -74,7 +115,7 @@ export class NotificationService {
     return 'Hace ' + Math.floor(diff / 3600) + ' h';
   }
 
-  // ── TEMPERATURA ─────────────────────────────────────
+  // ── TEMPERATURA ──────────────────────────────────────
   checkTemperatura(temp: number) {
     if (temp <= 0) return;
 
@@ -111,7 +152,7 @@ export class NotificationService {
     }
   }
 
-  // ── UV ───────────────────────────────────────────────
+  // ── UV ────────────────────────────────────────────────
   checkUV(uvIndex: number, ciudad: string) {
     if (uvIndex <= 0) return;
 
@@ -158,7 +199,7 @@ export class NotificationService {
     }
   }
 
-  // ── GPS ──────────────────────────────────────────────
+  // ── GPS ───────────────────────────────────────────────
   checkGPSFix(hasFix: boolean, satellites: number) {
     if (hasFix && this.canSend('gps_fix')) {
       this.add({
@@ -183,7 +224,7 @@ export class NotificationService {
     }
   }
 
-  // ── CONEXIÓN ESP32 ───────────────────────────────────
+  // ── CONEXIÓN ESP32 ────────────────────────────────────
   checkConexion(isConnected: boolean) {
     if (isConnected && this.canSend('esp32_conectado')) {
       this.add({
@@ -206,5 +247,24 @@ export class NotificationService {
         badgeClass: 'alert-badge'
       });
     }
+  }
+
+  // ── MOVIMIENTO ────────────────────────────────────────
+checkMovimiento() {
+  if (this.canSend('movimiento')) {
+    this.add({
+      type: 'warning',
+      icon: 'walk',
+      iconClass: 'temperature-icon',
+      title: '¡Movimiento detectado!',
+      message: 'La mochila se está moviendo. Verifica que esté segura.',
+      badge: 'Alerta',
+      badgeClass: 'alert-badge'
+    });
+  }
+}
+
+  getNotifications(): AppNotification[] {
+    return this.notifications$.getValue();
   }
 }

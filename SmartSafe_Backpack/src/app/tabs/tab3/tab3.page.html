@@ -12,18 +12,16 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="schedule-container">
 
-    <!-- Header Section -->
     <div class="header-section">
       <h1 class="main-title">Horario de Clases</h1>
-      <p class="subtitle">Lunes a Viernes • 7:00 AM - 12:45 PM</p>
+      <p class="subtitle">{{ horarioConfigurado ? horarioData.dias.join(' · ') : 'Configura tu horario personalizado' }}</p>
     </div>
 
-    <!-- Estado de conexión ESP32 -->
     <div class="connection-bar" [class.connected]="isConnected" [class.disconnected]="!isConnected">
       <div class="connection-left">
         <div class="connection-dot" [class.dot-on]="isConnected" [class.dot-off]="!isConnected"></div>
         <ion-icon [name]="isConnected ? 'radio' : 'radio-outline'"></ion-icon>
-        <span>{{ isConnected ? 'Esperando ingreso de cuadernos...' : 'Mochila desconectada' }}</span>
+        <span>{{ isConnected ? 'Mochila conectada' : 'Mochila desconectada' }}</span>
       </div>
       <div class="connection-right">
         <ion-icon name="time-outline"></ion-icon>
@@ -31,148 +29,358 @@
       </div>
     </div>
 
-    <!-- Horario Grid -->
-    <div class="schedule-grid">
-      <div class="schedule-header time-col">Hora</div>
-      <div class="schedule-header">Lunes</div>
-      <div class="schedule-header">Martes</div>
-      <div class="schedule-header">Miércoles</div>
-      <div class="schedule-header">Jueves</div>
-      <div class="schedule-header">Viernes</div>
-
-      <!-- 7:00 - 7:40 -->
-      <div class="time-cell">7:00<br>7:40</div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell sociales"><div class="subject-name">Estudios Sociales</div></div>
-
-      <!-- 7:40 - 8:20 -->
-      <div class="time-cell">7:40<br>8:20</div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell sociales"><div class="subject-name">Estudios Sociales</div></div>
-
-      <!-- 8:20 - 9:00 -->
-      <div class="time-cell">8:20<br>9:00</div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-
-      <!-- 9:00 - 9:40 -->
-      <div class="time-cell">9:00<br>9:40</div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-
-      <!-- RECREO -->
-      <div class="time-cell recreo-time">9:40<br>10:05</div>
-      <div class="recreo-cell">
-        <ion-icon name="cafe-outline"></ion-icon>
-        <span>RECREO</span>
-      </div>
-      <div class="recreo-cell"></div>
-      <div class="recreo-cell"></div>
-      <div class="recreo-cell"></div>
-      <div class="recreo-cell"></div>
-
-      <!-- 10:05 - 10:45 -->
-      <div class="time-cell">10:05<br>10:45</div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell sociales"><div class="subject-name">Estudios Sociales</div></div>
-      <div class="class-cell sociales"><div class="subject-name">Estudios Sociales</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell orientacion"><div class="subject-name">Orientación</div></div>
-
-      <!-- 10:45 - 11:25 -->
-      <div class="time-cell">10:45<br>11:25</div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell sociales"><div class="subject-name">Estudios Sociales</div></div>
-      <div class="class-cell orientacion"><div class="subject-name">Orientación</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-      <div class="class-cell religion"><div class="subject-name">Religión</div></div>
-
-      <!-- 11:25 - 12:05 -->
-      <div class="time-cell">11:25<br>12:05</div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell ciencias"><div class="subject-name">Ciencias Naturales</div></div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell religion"><div class="subject-name">Religión</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
-
-      <!-- 12:05 - 12:45 -->
-      <div class="time-cell">12:05<br>12:45</div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell religion"><div class="subject-name">Religión</div></div>
-      <div class="class-cell ed-fisica"><div class="subject-name">Educación Física</div></div>
-      <div class="class-cell lengua"><div class="subject-name">Lengua y Literatura</div></div>
-      <div class="class-cell matematicas"><div class="subject-name">Matemáticas</div></div>
+    <div class="vista-tabs">
+      <button class="vista-tab" [class.active]="vistaActual === 'horario'" (click)="vistaActual = 'horario'">
+        <ion-icon name="calendar-outline"></ion-icon>
+        Horario
+      </button>
+      <button class="vista-tab" [class.active]="vistaActual === 'cuadernos'" (click)="vistaActual = 'cuadernos'">
+        <ion-icon name="scan-circle-outline"></ion-icon>
+        Cuadernos
+      </button>
     </div>
 
-    <!-- Cuadernos Section -->
-    <div class="forgotten-section" [class.section-disabled]="!isConnected">
-      <div class="section-header">
-        <ion-icon name="scan-circle"></ion-icon>
-        <h3>Cuadernos del día</h3>
-      </div>
+    <div *ngIf="vistaActual === 'horario'">
 
-      <!-- Día actual -->
-      <div class="dia-hoy">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <span>Hoy es <strong>{{ diaHoy }}</strong>, ingresa los cuadernos de:</span>
-      </div>
-
-      <!-- Mensaje éxito al escanear -->
-      <div class="mensaje-exito" *ngIf="ultimoIngresado">
-        <ion-icon name="checkmark-circle"></ion-icon>
-        <span>{{ ultimoIngresado }}</span>
-      </div>
-
-      <!-- Lista de materias -->
-      <div class="materias-lista">
-        <div *ngFor="let materia of materiasHoy"
-             class="materia-item"
-             [class.ingresado]="cuadernosIngresados.includes(materia)"
-             [class.pendiente]="!cuadernosIngresados.includes(materia)">
-          <ion-icon [name]="cuadernosIngresados.includes(materia) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-          <span>{{ materia }}</span>
-          <span class="badge-estado" *ngIf="cuadernosIngresados.includes(materia)">Ingresado</span>
-          <span class="badge-estado pendiente-badge" *ngIf="!cuadernosIngresados.includes(materia)">Pendiente</span>
+      <div class="empty-horario" *ngIf="!horarioConfigurado">
+        <div class="empty-icon-wrap">
+          <ion-icon name="calendar-outline"></ion-icon>
         </div>
-      </div>
-
-      <!-- Mensaje de estado general -->
-      <div class="mensaje-estado">
-        <p>{{ mensajeEstado }}</p>
-      </div>
-
-      <!-- Botón reiniciar escaneo -->
-      <div class="reiniciar-container">
-        <ion-button expand="block" fill="outline" color="warning" (click)="reiniciarEscaneo()" class="reiniciar-btn" [disabled]="!isConnected">
-          <ion-icon name="refresh-circle-outline" slot="start"></ion-icon>
-          Reiniciar Escaneo de Cuadernos
+        <h3>Sin horario configurado</h3>
+        <p>Crea tu horario arrastrando materias a los días que quieras</p>
+        <ion-button expand="block" class="btn-configurar" (click)="abrirModalDias()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Configurar Horario
         </ion-button>
       </div>
 
-      <!-- Fin de semana -->
-      <div class="empty-state" *ngIf="materiasHoy.length === 0">
-        <ion-icon name="sunny-outline"></ion-icon>
-        <p>¡Hoy no hay clases! Disfruta tu día 🎉</p>
-      </div>
+      <div *ngIf="horarioConfigurado">
 
+        <div class="acciones-bar">
+          <ion-button fill="clear" size="small" class="btn-accion"
+                      (click)="abrirModalMateria()" *ngIf="!horarioData.guardado">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            Nueva materia
+          </ion-button>
+          <ion-button fill="clear" size="small" class="btn-accion"
+                      (click)="abrirModalDias()" *ngIf="!horarioData.guardado">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            Días
+          </ion-button>
+          <ion-button fill="clear" size="small" class="btn-accion-success"
+                      (click)="guardarHorarioFinal()" *ngIf="!horarioData.guardado">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            Guardar
+          </ion-button>
+          <ion-button fill="clear" size="small" class="btn-accion"
+                      (click)="editarHorario()" *ngIf="horarioData.guardado">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar
+          </ion-button>
+          <ion-button fill="clear" size="small" class="btn-accion-danger"
+                      (click)="resetearHorario()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Resetear
+          </ion-button>
+        </div>
+
+        <div class="grid-wrapper">
+          <div class="schedule-grid"
+               [style.grid-template-columns]="'72px repeat(' + horarioData.dias.length + ', 1fr)'">
+
+            <div class="schedule-header time-col">Hora</div>
+            <div class="schedule-header" *ngFor="let dia of horarioData.dias">
+              {{ dia.substring(0, 3) }}
+            </div>
+
+            <ng-container *ngFor="let slot of horarioData.slots">
+              <div class="time-cell" (click)="abrirEditSlot(slot)">
+                <span>{{ slot.horaInicio }}</span>
+                <span class="time-sep">|</span>
+                <span>{{ slot.horaFin }}</span>
+                <ion-icon name="pencil-outline" class="edit-time-icon" *ngIf="!horarioData.guardado"></ion-icon>
+              </div>
+
+              <div *ngFor="let dia of horarioData.dias"
+                   class="grid-cell"
+                   [class.cell-ocupada]="getCelda(slot.id, dia)"
+                   [class.cell-recreo]="getCelda(slot.id, dia)?.tipo === 'recreo'"
+                   [attr.data-slot-id]="slot.id"
+                   [attr.data-dia]="dia"
+                   (dragover)="onDragOver($event)"
+                   (drop)="onDropEnCelda(slot.id, dia)"
+                   (touchend)="onTouchEnd($event)">
+
+                <div class="cell-empty" *ngIf="!getCelda(slot.id, dia)">
+                  <ion-icon name="add-outline" *ngIf="!horarioData.guardado"></ion-icon>
+                </div>
+
+                <div *ngIf="getCelda(slot.id, dia)?.tipo === 'materia'"
+                     class="cell-content materia-cell"
+                     [style.background]="getMateriaById(getCelda(slot.id, dia)!.materiaId!)?.color + '33'"
+                     [style.border-color]="getMateriaById(getCelda(slot.id, dia)!.materiaId!)?.color + '99'"
+                     [style.color]="getMateriaById(getCelda(slot.id, dia)!.materiaId!)?.color"
+                     [draggable]="!horarioData.guardado"
+                     (dragstart)="onDragStartCelda($event, slot.id, dia)"
+                     (dragend)="onDragEnd($event)"
+                     (touchstart)="onTouchStartCelda($event, slot.id, dia)"
+                     (touchmove)="onTouchMove($event)"
+                     (touchend)="onTouchEnd($event)">
+                  <span class="cell-nombre">{{ getMateriaById(getCelda(slot.id, dia)!.materiaId!)?.nombre }}</span>
+                  <ion-icon name="close-circle" class="cell-remove"
+                            *ngIf="!horarioData.guardado"
+                            (click)="limpiarCelda(slot.id, dia); $event.stopPropagation()">
+                  </ion-icon>
+                </div>
+
+                <div *ngIf="getCelda(slot.id, dia)?.tipo === 'recreo'"
+                     class="cell-content recreo-cell-grid"
+                     [draggable]="!horarioData.guardado"
+                     (dragstart)="onDragStartCelda($event, slot.id, dia)"
+                     (dragend)="onDragEnd($event)"
+                     (touchstart)="onTouchStartCelda($event, slot.id, dia)"
+                     (touchmove)="onTouchMove($event)"
+                     (touchend)="onTouchEnd($event)">
+                  <ion-icon name="cafe-outline"></ion-icon>
+                  <span>Recreo</span>
+                  <ion-icon name="close-circle" class="cell-remove"
+                            *ngIf="!horarioData.guardado"
+                            (click)="limpiarCelda(slot.id, dia); $event.stopPropagation()">
+                  </ion-icon>
+                </div>
+
+              </div>
+            </ng-container>
+          </div>
+
+          <ion-button fill="clear" size="small" class="btn-add-slot"
+                      (click)="agregarSlot()" *ngIf="!horarioData.guardado">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            Agregar fila de hora
+          </ion-button>
+        </div>
+
+        <!-- Panel chips -->
+        <div class="panel-items" *ngIf="!horarioData.guardado">
+          <div class="panel-title">
+            <ion-icon name="hand-left-outline"></ion-icon>
+            <span>Arrastra al horario</span>
+          </div>
+
+          <div class="panel-chips">
+            <div class="chip-item recreo-chip"
+                 draggable="true"
+                 (dragstart)="onDragStartMateria($event, 'recreo')"
+                 (dragend)="onDragEnd($event)"
+                 (touchstart)="onTouchStartPanel($event, 'recreo')"
+                 (touchmove)="onTouchMove($event)"
+                 (touchend)="onTouchEnd($event)">
+              <ion-icon name="cafe-outline"></ion-icon>
+              <span>Recreo</span>
+            </div>
+
+            <div class="chip-item materia-chip"
+                 *ngFor="let m of horarioData.materias"
+                 [style.background]="m.color + '22'"
+                 [style.border-color]="m.color + '66'"
+                 [style.color]="m.color"
+                 draggable="true"
+                 (dragstart)="onDragStartMateria($event, 'materia', m.id)"
+                 (dragend)="onDragEnd($event)"
+                 (touchstart)="onTouchStartPanel($event, 'materia', m.id)"
+                 (touchmove)="onTouchMove($event)"
+                 (touchend)="onTouchEnd($event)">
+              <div class="chip-dot" [style.background]="m.color"></div>
+              <span class="chip-text">{{ m.nombre }}</span>
+              <div class="chip-actions">
+                <ion-icon name="create-outline" class="chip-edit"
+                          (click)="abrirModalMateria(m); $event.stopPropagation()">
+                </ion-icon>
+                <ion-icon name="trash-outline" class="chip-delete"
+                          (click)="eliminarMateria(m); $event.stopPropagation()">
+                </ion-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-empty" *ngIf="!horarioData.materias.length">
+            <p>Agrega materias con el botón de arriba</p>
+          </div>
+        </div>
+
+      </div>
     </div>
+
+    <div *ngIf="vistaActual === 'cuadernos'">
+      <div class="forgotten-section" [class.section-disabled]="!isConnected">
+
+        <div class="section-header">
+          <ion-icon name="scan-circle"></ion-icon>
+          <h3>Cuadernos del día</h3>
+        </div>
+
+        <div class="dia-hoy">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>Hoy es <strong>{{ diaHoy }}</strong></span>
+        </div>
+
+        <div class="mensaje-exito" *ngIf="ultimoIngresado">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>{{ ultimoIngresado }}</span>
+        </div>
+
+        <div *ngIf="!horarioData.guardado" class="sin-horario-msg">
+          <ion-icon name="warning-outline"></ion-icon>
+          <p>Guarda el horario primero para usar esta función</p>
+        </div>
+
+        <div class="materias-lista" *ngIf="horarioData.guardado">
+          <div *ngIf="materiasHoy.length === 0" class="empty-state">
+            <ion-icon name="sunny-outline"></ion-icon>
+            <p>No hay materias para hoy</p>
+          </div>
+          <div *ngFor="let materia of materiasHoy"
+               class="materia-item"
+               [class.ingresado]="cuadernosIngresados.includes(materia.uid)"
+               [class.pendiente]="!cuadernosIngresados.includes(materia.uid)">
+            <ion-icon [name]="cuadernosIngresados.includes(materia.uid) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+            <span>{{ materia.nombre }}</span>
+            <span class="badge-estado" *ngIf="cuadernosIngresados.includes(materia.uid)">Ingresado</span>
+            <span class="badge-estado pendiente-badge" *ngIf="!cuadernosIngresados.includes(materia.uid)">Pendiente</span>
+          </div>
+        </div>
+
+        <div class="mensaje-estado" *ngIf="horarioData.guardado">
+          <p>{{ mensajeEstado }}</p>
+        </div>
+
+        <div class="reiniciar-container" *ngIf="horarioData.guardado">
+          <ion-button expand="block" fill="outline" color="warning"
+                      (click)="reiniciarEscaneo()" class="reiniciar-btn"
+                      [disabled]="!isConnected">
+            <ion-icon name="refresh-circle-outline" slot="start"></ion-icon>
+            Reiniciar Escaneo
+          </ion-button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
-  <!-- Background Effects -->
   <div class="background-effects">
     <div class="bg-circle circle-1"></div>
     <div class="bg-circle circle-2"></div>
   </div>
 </ion-content>
+
+<!-- MODAL: DÍAS -->
+<div class="modal-overlay" *ngIf="showModalDias" (click)="showModalDias = false">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <h3>¿Qué días tienes clases?</h3>
+    </div>
+    <p class="modal-subtitle">Selecciona uno o varios días</p>
+    <div class="dias-grid">
+      <button *ngFor="let dia of diasDisponibles"
+              class="dia-btn"
+              [class.selected]="isDiaSeleccionado(dia)"
+              (click)="toggleDia(dia)">
+        {{ dia }}
+      </button>
+    </div>
+    <div class="modal-actions">
+      <ion-button fill="outline" class="btn-cancel" (click)="showModalDias = false">Cancelar</ion-button>
+      <ion-button class="btn-confirm" (click)="confirmarDias()" [disabled]="!diasSeleccionados.length">
+        Confirmar
+        <ion-icon name="checkmark-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR SLOT -->
+<div class="modal-overlay" *ngIf="showModalEditSlot" (click)="showModalEditSlot = false">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <ion-icon name="time-outline"></ion-icon>
+      <h3>Editar horario</h3>
+    </div>
+    <div class="form-group">
+      <label>Hora inicio</label>
+      <input type="time" [(ngModel)]="slotEditando.horaInicio" class="time-input">
+    </div>
+    <div class="form-group">
+      <label>Hora fin</label>
+      <input type="time" [(ngModel)]="slotEditando.horaFin" class="time-input">
+    </div>
+    <div class="modal-actions">
+      <ion-button fill="clear" size="small" class="btn-delete-slot"
+                  (click)="eliminarSlot(slotEditando); showModalEditSlot = false">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Eliminar fila
+      </ion-button>
+      <ion-button class="btn-confirm" (click)="guardarEditSlot()">
+        Guardar
+        <ion-icon name="checkmark-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MATERIA -->
+<div class="modal-overlay" *ngIf="showModalMateria" (click)="showModalMateria = false">
+  <div class="modal-card modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <ion-icon name="book-outline"></ion-icon>
+      <h3>{{ esMateriaEdicion ? 'Editar' : 'Nueva' }} Materia</h3>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="materiaTemp.nombre"
+             placeholder="Ej: Matemáticas" class="text-input">
+    </div>
+
+    <div class="form-group">
+      <label>Color</label>
+      <div class="colores-grid">
+        <button *ngFor="let color of coloresDisponibles"
+                class="color-btn"
+                [style.background]="color"
+                [class.selected]="materiaTemp.color === color"
+                (click)="seleccionarColor(color)">
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Tarjeta RFID</label>
+      <div class="uid-section">
+        <div class="uid-display" [class.uid-found]="materiaTemp.uid">
+          <ion-icon [name]="materiaTemp.uid ? 'card' : 'card-outline'"></ion-icon>
+          <span>{{ materiaTemp.uid || 'Sin tarjeta registrada' }}</span>
+        </div>
+        <ion-button fill="outline" size="small" class="btn-scan"
+                    (click)="iniciarEscaneoUID()" [disabled]="escuchandoUID">
+          <ion-icon [name]="escuchandoUID ? 'radio-outline' : 'scan-outline'" slot="start"></ion-icon>
+          {{ escuchandoUID ? 'Esperando...' : 'Escanear' }}
+        </ion-button>
+      </div>
+      <p class="uid-hint" *ngIf="escuchandoUID">
+        <ion-icon name="radio-outline" class="blink-icon"></ion-icon>
+        Acerca la tarjeta RFID al lector
+      </p>
+    </div>
+
+    <div class="modal-actions">
+      <ion-button fill="outline" class="btn-cancel" (click)="showModalMateria = false">Cancelar</ion-button>
+      <ion-button class="btn-confirm" (click)="guardarMateria()"
+                  [disabled]="!materiaTemp.nombre.trim()">
+        Guardar
+        <ion-icon name="checkmark-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</div>

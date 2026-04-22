@@ -8,6 +8,8 @@ import { initializeApp } from "firebase/app";
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { NotificationService } from '../../services/notification.service';
+import { Geolocation } from '@capacitor/geolocation';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   standalone: false,
@@ -21,22 +23,17 @@ export class Tab1Page implements OnInit, OnDestroy {
   userFullName: string = 'Usuario';
   userEmail: string = '';
 
-  // Sensores BMP280
   temperatura: number = 0;
   presion: number = 0;
   altitud: number = 0;
-
-  // HX711
   peso: number = 0;
 
-  // UV OpenWeather
   uvIndex: number = 0;
   uvLevel: string = 'Sin datos';
   uvColor: string = '#888';
   uvLoading: boolean = true;
   cityName: string = '';
 
-  // Sistema de conexión
   isConnected: boolean = false;
   lastDataUpdate: number = 0;
   lastUpdateText: string = 'Esperando datos...';
@@ -77,22 +74,35 @@ export class Tab1Page implements OnInit, OnDestroy {
   // ── UV ──────────────────────────────────────────────
   loadUVIndex() {
     this.uvLoading = true;
-    if (!navigator.geolocation) {
-      this.uvLevel = 'No disponible';
-      this.uvLoading = false;
-      return;
-    }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.fetchUV(position.coords.latitude, position.coords.longitude);
-      },
-      () => {
-        console.warn('Geolocalización denegada, usando Cuenca EC por defecto');
+    if (Capacitor.isNativePlatform()) {
+      Geolocation.requestPermissions().then(result => {
+        if (result.location === 'granted' || result.coarseLocation === 'granted') {
+          Geolocation.getCurrentPosition({ timeout: 8000 }).then(pos => {
+            this.fetchUV(pos.coords.latitude, pos.coords.longitude);
+          }).catch(() => {
+            this.fetchUV(-2.9001, -79.0059);
+          });
+        } else {
+          this.fetchUV(-2.9001, -79.0059);
+        }
+      }).catch(() => {
         this.fetchUV(-2.9001, -79.0059);
-      },
-      { timeout: 8000 }
-    );
+      });
+    } else {
+      if (!navigator.geolocation) {
+        this.fetchUV(-2.9001, -79.0059);
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => this.fetchUV(pos.coords.latitude, pos.coords.longitude),
+        () => {
+          console.warn('Geolocalización denegada, usando Cuenca EC por defecto');
+          this.fetchUV(-2.9001, -79.0059);
+        },
+        { timeout: 8000 }
+      );
+    }
   }
 
   fetchUV(lat: number, lon: number) {
@@ -108,7 +118,6 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.http.get<any>(cityUrl).subscribe({
           next: (cityData) => {
             this.cityName = cityData.name || '';
-            // ← Notificación UV con ciudad ya cargada
             this.notificationService.checkUV(this.uvIndex, this.cityName);
           },
           error: () => {
@@ -126,34 +135,19 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   setUVLevel(uvi: number) {
-    if (uvi <= 2) {
-      this.uvLevel = 'Bajo';
-      this.uvColor = '#00c853';
-    } else if (uvi <= 5) {
-      this.uvLevel = 'Moderado';
-      this.uvColor = '#ffd600';
-    } else if (uvi <= 7) {
-      this.uvLevel = 'Alto';
-      this.uvColor = '#ff6d00';
-    } else if (uvi <= 10) {
-      this.uvLevel = 'Muy alto';
-      this.uvColor = '#dd2c00';
-    } else {
-      this.uvLevel = 'Extremo';
-      this.uvColor = '#aa00ff';
-    }
+    if (uvi <= 2) { this.uvLevel = 'Bajo'; this.uvColor = '#00c853'; }
+    else if (uvi <= 5) { this.uvLevel = 'Moderado'; this.uvColor = '#ffd600'; }
+    else if (uvi <= 7) { this.uvLevel = 'Alto'; this.uvColor = '#ff6d00'; }
+    else if (uvi <= 10) { this.uvLevel = 'Muy alto'; this.uvColor = '#dd2c00'; }
+    else { this.uvLevel = 'Extremo'; this.uvColor = '#aa00ff'; }
   }
 
-  // ── Getter peso ──────────────────────────────────────
   get pesoDisplay(): string {
     if (!this.isConnected || this.peso === 0) return '0 g';
-    if (this.peso >= 1000) {
-      return (this.peso / 1000).toFixed(1).replace('.', ',') + ' kg';
-    }
+    if (this.peso >= 1000) return (this.peso / 1000).toFixed(1).replace('.', ',') + ' kg';
     return Math.round(this.peso) + ' g';
   }
 
-  // ── Firebase ─────────────────────────────────────────
   initializeFirebaseListeners() {
     const app = initializeApp(environment.firebaseConfig);
     const db = getDatabase(app);
@@ -204,17 +198,11 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   onDataReceived(source: string, value: any) {
-    const now = Date.now();
-    this.lastDataUpdate = now;
+    this.lastDataUpdate = Date.now();
     this.consecutiveSuccess++;
     this.addToHistory(true);
-    if (source !== 'heartbeat') {
-      console.log('📡', source + ':', value);
-    }
-    // ← Notificación temperatura
-    if (source === 'temperatura') {
-      this.notificationService.checkTemperatura(value);
-    }
+    if (source !== 'heartbeat') console.log('📡', source + ':', value);
+    if (source === 'temperatura') this.notificationService.checkTemperatura(value);
   }
 
   startMonitoring() {
@@ -237,7 +225,7 @@ export class Tab1Page implements OnInit, OnDestroy {
       if (!this.isConnected) {
         console.log('✅ ESP32 CONECTADO');
         this.isConnected = true;
-        this.notificationService.checkConexion(true); // ← conexión
+        this.notificationService.checkConexion(true);
       }
       return;
     }
@@ -251,13 +239,13 @@ export class Tab1Page implements OnInit, OnDestroy {
           console.log('❌ ESP32 DESCONECTADO - Fallos:', failCount + '/' + this.BUFFER_SIZE);
           this.isConnected = false;
           this.resetSensorValues();
-          this.notificationService.checkConexion(false); // ← desconexión
+          this.notificationService.checkConexion(false);
         }
       } else if (successCount >= (this.BUFFER_SIZE - this.STABLE_DISCONNECT + 1)) {
         if (!this.isConnected) {
           console.log('✅ ESP32 CONECTADO (estable)');
           this.isConnected = true;
-          this.notificationService.checkConexion(true); // ← conexión estable
+          this.notificationService.checkConexion(true);
         }
       }
     }
@@ -265,9 +253,7 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   addToHistory(success: boolean) {
     this.connectionHistory.push(success);
-    if (this.connectionHistory.length > this.BUFFER_SIZE) {
-      this.connectionHistory.shift();
-    }
+    if (this.connectionHistory.length > this.BUFFER_SIZE) this.connectionHistory.shift();
   }
 
   resetSensorValues() {
@@ -278,24 +264,13 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   updateLastUpdateText() {
-    if (!this.isConnected) {
-      this.lastUpdateText = 'Desconectado';
-      return;
-    }
-    if (this.lastDataUpdate === 0) {
-      this.lastUpdateText = 'Esperando datos...';
-      return;
-    }
+    if (!this.isConnected) { this.lastUpdateText = 'Desconectado'; return; }
+    if (this.lastDataUpdate === 0) { this.lastUpdateText = 'Esperando datos...'; return; }
     const timeDiff = Math.floor((Date.now() - this.lastDataUpdate) / 1000);
-    if (timeDiff < 2) {
-      this.lastUpdateText = 'Ahora mismo';
-    } else if (timeDiff < 60) {
-      this.lastUpdateText = 'Hace ' + timeDiff + ' seg';
-    } else if (timeDiff < 3600) {
-      this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 60) + ' min';
-    } else {
-      this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 3600) + ' h';
-    }
+    if (timeDiff < 2) this.lastUpdateText = 'Ahora mismo';
+    else if (timeDiff < 60) this.lastUpdateText = 'Hace ' + timeDiff + ' seg';
+    else if (timeDiff < 3600) this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 60) + ' min';
+    else this.lastUpdateText = 'Hace ' + Math.floor(timeDiff / 3600) + ' h';
   }
 
   async loadUserData() {
@@ -308,9 +283,7 @@ export class Tab1Page implements OnInit, OnDestroy {
       } else if (currentUser.email) {
         const userData = await this.firebaseService.getUserData(currentUser.email);
         console.log('👤 userData:', userData);
-        if (userData.success && userData.data) {
-          this.userFullName = userData.data.nombre;
-        }
+        if (userData.success && userData.data) this.userFullName = userData.data.nombre;
       }
     }
   }
@@ -343,14 +316,11 @@ export class Tab1Page implements OnInit, OnDestroy {
       message: '¿Estás seguro de que deseas cerrar sesión?',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Cerrar sesión',
-          handler: async () => {
-            await this.firebaseService.logout();
-            this.popoverController.dismiss();
-            this.router.navigate(['/pagina-inicio']);
-          }
-        }
+        { text: 'Cerrar sesión', handler: async () => {
+          await this.firebaseService.logout();
+          this.popoverController.dismiss();
+          this.router.navigate(['/pagina-inicio']);
+        }}
       ]
     });
     await alert.present();

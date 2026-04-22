@@ -31,9 +31,29 @@ Adafruit_PN532 nfc(SDA_PIN2, SCL_PIN2, &I2C_NFC);
 HardwareSerial neogps(1);
 TinyGPSPlus gps;
 
+// ================= MPU-9250 =================
+#define MPU_ADDR  0x68
+#define THRESHOLD 0.03f  // ← bajado para detectar movimientos suaves en todos los ejes
+#define IDLE_MS   800UL
+
+int16_t ax, ay, az;
+bool moving = false;
+unsigned long lastMotionTime = 0;
+bool modoDeteccionActivo = false;
+
+void readMPU() {
+  Wire.beginTransmission(MPU_ADDR);
+  Wire.write(0x3B);
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_ADDR, 6);
+  ax = Wire.read() << 8 | Wire.read();
+  ay = Wire.read() << 8 | Wire.read();
+  az = Wire.read() << 8 | Wire.read();
+}
+
 // ================= WiFi =================
-const char* WIFI_SSID = "Maria_Eugenia_Rea";
-const char* WIFI_PASSWORD = "este06dieg087";
+const char* WIFI_SSID = "daf adfad";
+const char* WIFI_PASSWORD = "1234567890";
 
 // ================= Firebase =================
 const char* API_KEY = "AIzaSyCzbr7xVWPI__gHan0C0AuVcjm4EWJLSOw";
@@ -58,8 +78,14 @@ void setup() {
   setupFirebase();
 
   Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.setClock(400000);
 
   if (!bmp.begin(BMP_ADDRESS)) while (1);
+
+  Wire.beginTransmission(MPU_ADDR);
+  Wire.write(0x6B);
+  Wire.write(0x01);
+  Wire.endTransmission();
 
   I2C_NFC.begin(SDA_PIN2, SCL_PIN2);
   nfc.begin();
@@ -102,6 +128,33 @@ void loop() {
   float presion     = bmp.readPressure() / 100.0F;
   float altitudBMP  = bmp.readAltitude(SEALEVELPRESSURE_HPA);
 
+  // ================= MPU-9250 =================
+  float ax_g = 0, ay_g = 0, az_g = 0, movimiento = 0;
+
+  for (int i = 0; i < 10; i++) {
+    readMPU();
+    ax_g = ax / 16384.0f;
+    ay_g = ay / 16384.0f;
+    az_g = az / 16384.0f;
+
+    // Magnitud total — detecta movimiento en cualquier dirección
+    float magnitude = sqrtf(ax_g*ax_g + ay_g*ay_g + az_g*az_g);
+    movimiento = fabsf(magnitude - 1.0f);
+
+    unsigned long now = millis();
+    if (movimiento > THRESHOLD) {
+      lastMotionTime = now;
+      if (!moving) {
+        moving = true;
+        Serial.println("MOVIMIENTO DETECTADO");
+      }
+    } else if (moving && (now - lastMotionTime > IDLE_MS)) {
+      moving = false;
+      Serial.println("QUIETO");
+    }
+    delay(10);
+  }
+
   // ================= GPS =================
   int   satellites  = gps.satellites.value();
   bool  gpsFix      = gps.location.isValid();
@@ -115,6 +168,11 @@ void loop() {
 
   // ================= FIREBASE =================
   if (Firebase.ready()) {
+
+    // Solo leer el modo — la app es la única que escribe este valor
+    if (Firebase.RTDB.getBool(&fbdo, "/MPU9250/modoActivo")) {
+      modoDeteccionActivo = fbdo.boolData();
+    }
 
     FirebaseJson gpsJson;
     gpsJson.set("latitud",   latitude);
@@ -140,21 +198,38 @@ void loop() {
     nfcJson.set("heartbeat", (int)heartbeat);
     Firebase.RTDB.setJSON(&fbdo, "/NFC", &nfcJson);
 
+    // Solo enviar datos MPU si el modo está activo
+    // El ESP32 nunca escribe modoActivo — solo la app lo hace
+    if (modoDeteccionActivo) {
+      FirebaseJson mpuJson;
+      mpuJson.set("ax_g",       ax_g);
+      mpuJson.set("ay_g",       ay_g);
+      mpuJson.set("az_g",       az_g);
+      mpuJson.set("movimiento", movimiento);
+      mpuJson.set("moving",     moving);
+      mpuJson.set("lastUpdate", (int)heartbeat);
+      Firebase.RTDB.setJSON(&fbdo, "/MPU9250", &mpuJson);
+
+      Serial.print("MPU | moving: ");
+      Serial.print(moving ? "SI" : "NO");
+      Serial.print(" | movimiento: ");
+      Serial.println(movimiento);
+    }
+
     envioOK = true;
   }
 
   // ================= SERIAL =================
   Serial.println("--------------------------------------------");
-
+  Serial.print("Modo deteccion: ");
+  Serial.println(modoDeteccionActivo ? "ACTIVO" : "INACTIVO");
   Serial.print("NFC | ");
   Serial.println(tarjetaDetectada ? "Tarjeta: " + uidString : "Sin tarjeta");
-
   Serial.print("Firebase | ");
   Serial.println(envioOK ? "Envio OK" : "ERROR");
-
   Serial.println("--------------------------------------------");
 
-  delay(1500);
+  delay(50);
 }
 
 // ================= FUNCIONES =================

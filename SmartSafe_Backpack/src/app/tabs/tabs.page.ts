@@ -12,7 +12,7 @@ export class TabsPage implements AfterViewInit, OnDestroy {
 
   @ViewChild('tabs') tabs!: IonTabs;
 
-  private readonly tabOrder = ['tab1', 'tab2', 'tab3', 'tab4'];
+  private readonly tabOrder = ['tab1', 'tab5', 'tab2', 'tab3', 'tab4'];
   private currentTab: string = 'tab1';
 
   private startX = 0;

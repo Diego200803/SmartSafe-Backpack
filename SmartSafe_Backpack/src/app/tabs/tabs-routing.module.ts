@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
-   {
+  {
     path: '',
     component: TabsPage,
     children: [
@@ -28,6 +28,11 @@ const routes: Routes = [
           import('./tab4/tab4.module').then(m => m.Tab4PageModule),
       },
       {
+        path: 'tab5',
+        loadChildren: () =>
+          import('./tab5/tab5.module').then(m => m.Tab5PageModule),
+      },
+      {
         path: 'pagina-inicio',
         loadChildren: () =>
           import('../pagina-inicio/pagina-inicio.module').then(m => m.PaginaInicioPageModule),
@@ -37,7 +42,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('../login/login.module').then(m => m.LoginPageModule),
       },
-       {
+      {
         path: 'register',
         loadChildren: () =>
           import('../register/register.module').then(m => m.RegisterPageModule),
@@ -50,7 +55,6 @@ const routes: Routes = [
     ]
   }
 ];
-
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
