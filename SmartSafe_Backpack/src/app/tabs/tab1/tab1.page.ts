@@ -47,7 +47,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   private readonly STABLE_DISCONNECT = 6;
   private consecutiveSuccess: number = 0;
 
-  private readonly OPENWEATHER_KEY = '1bf9772e66b038c7e9f7b3d8de4124b2';
+  private readonly OPENWEATHER_KEY = environment.openWeatherKey;
 
   constructor(
     private firebaseService: FirebaseService,
