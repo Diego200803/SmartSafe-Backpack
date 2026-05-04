@@ -81,7 +81,7 @@ export class NotificationService {
             id: this.notifIdCounter++,
             title,
             body,
-            smallIcon: 'ic_stat_logo_app',  // ← actualizado
+            smallIcon: 'ic_stat_logo_app',
             iconColor: '#00d4ff',
             sound: undefined,
             actionTypeId: '',

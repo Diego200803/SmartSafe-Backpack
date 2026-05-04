@@ -11,13 +11,11 @@
   letter-spacing: 0.5px;
 }
 
-/* Icono de perfil */
 .profile-icon {
   font-size: 32px !important;
   color: #00d4ff;
 }
 
-/* Content */
 ion-content {
   --background: linear-gradient(135deg, #0a1628 0%, #0f1b2e 50%, #1a2332 100%);
 }
@@ -48,7 +46,6 @@ ion-content {
   transition: all 0.3s ease;
 }
 
-/* 🔥 Estado inactivo */
 .gps-status-bar.status-inactive {
   border-color: rgba(255, 100, 100, 0.3);
   background: rgba(255, 100, 100, 0.05);
@@ -78,12 +75,8 @@ ion-content {
 }
 
 @keyframes rotate-pulse {
-  0%, 100% {
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.1);
-  }
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
 }
 
 .gps-indicator span {
@@ -126,30 +119,15 @@ ion-content {
   transition: all 0.3s ease;
 }
 
-/* 🔥 Badge inactivo */
 .accuracy-badge.badge-inactive {
   background: rgba(255, 100, 100, 0.1);
   border-color: rgba(255, 100, 100, 0.3);
 }
 
-.accuracy-badge.badge-inactive ion-icon {
-  color: #ff6464;
-}
-
-.accuracy-badge.badge-inactive span {
-  color: #ff6464;
-}
-
-.accuracy-badge ion-icon {
-  font-size: 18px;
-  color: #00d4ff;
-}
-
-.accuracy-badge span {
-  font-size: 12px;
-  font-weight: 600;
-  color: #00d4ff;
-}
+.accuracy-badge.badge-inactive ion-icon { color: #ff6464; }
+.accuracy-badge.badge-inactive span { color: #ff6464; }
+.accuracy-badge ion-icon { font-size: 18px; color: #00d4ff; }
+.accuracy-badge span { font-size: 12px; font-weight: 600; color: #00d4ff; }
 
 /* Map Area */
 .map-area {
@@ -157,7 +135,7 @@ ion-content {
   top: 100px;
   left: 16px;
   right: 16px;
-  bottom: 260px;
+  bottom: 220px;
   border-radius: 24px;
   border: 2px solid rgba(0, 212, 255, 0.2);
   overflow: hidden;
@@ -170,23 +148,67 @@ ion-content {
   height: 100%;
 }
 
+/* Map Overlay */
+.map-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 22, 40, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+}
+
+.overlay-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.pulse-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #00d4ff;
+  margin: 0 auto 12px;
+  animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+.satellite-icon {
+  font-size: 32px;
+  color: #00d4ff;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.overlay-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px 0;
+}
+
+.overlay-subtext {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
 /* Location Info Card */
 .location-info-card {
   position: absolute;
-  bottom: 20px;
+  bottom: 8px;
   left: 16px;
   right: 16px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(30px);
   border-radius: 20px;
   border: 2px solid rgba(0, 212, 255, 0.3);
-  padding: 20px;
+  padding: 14px 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   animation: slideUp 0.6s ease-out 0.5s both;
   transition: all 0.3s ease;
 }
 
-/* 🔥 Card inactiva */
 .location-info-card.card-inactive {
   border-color: rgba(255, 100, 100, 0.3);
   background: rgba(255, 100, 100, 0.03);
@@ -196,36 +218,21 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.card-header ion-icon {
-  font-size: 24px;
-  color: #00d4ff;
-}
-
-.card-inactive .card-header ion-icon {
-  color: #ff6464;
-}
-
-.card-header h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
+.card-header ion-icon { font-size: 24px; color: #00d4ff; }
+.card-inactive .card-header ion-icon { color: #ff6464; }
+.card-header h3 { font-size: 16px; font-weight: 700; color: white; margin: 0; }
 
 .coordinates-grid {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
-.coordinate-item {
-  text-align: center;
-  flex: 1;
-}
+.coordinate-item { text-align: center; flex: 1; }
 
 .coordinate-item .label {
   font-size: 11px;
@@ -236,17 +243,14 @@ ion-content {
 }
 
 .coordinate-item .value {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #00d4ff;
   margin: 0;
   font-family: 'Courier New', monospace;
 }
 
-/* 🔥 Valor inactivo */
-.coordinate-item .value-inactive {
-  color: rgba(255, 100, 100, 0.6);
-}
+.coordinate-item .value-inactive { color: rgba(255, 100, 100, 0.6); }
 
 .coordinate-divider {
   width: 1px;
@@ -254,13 +258,13 @@ ion-content {
   background: rgba(0, 212, 255, 0.3);
 }
 
-/* 🔥 Data Grid */
+/* Data Grid */
 .data-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-top: 16px;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-top: 10px;
   border-top: 1px solid rgba(0, 212, 255, 0.2);
 }
 
@@ -273,14 +277,8 @@ ion-content {
   border-radius: 12px;
 }
 
-.data-item ion-icon {
-  font-size: 20px;
-  color: #00d4ff;
-}
-
-.data-content {
-  flex: 1;
-}
+.data-item ion-icon { font-size: 20px; color: #00d4ff; }
+.data-content { flex: 1; }
 
 .data-label {
   font-size: 10px;
@@ -290,32 +288,19 @@ ion-content {
   letter-spacing: 0.5px;
 }
 
-.data-value {
-  font-size: 14px;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
+.data-value { font-size: 14px; font-weight: 700; color: white; margin: 0; }
 
+/* Update Info */
 .update-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
+  padding-top: 8px;
   border-top: 1px solid rgba(0, 212, 255, 0.2);
 }
 
-.update-info ion-icon {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-right: 6px;
-}
-
-.update-info > span {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-  flex: 1;
-}
+.update-info ion-icon { font-size: 16px; color: rgba(255, 255, 255, 0.6); margin-right: 6px; }
+.update-info > span { font-size: 12px; color: rgba(255, 255, 255, 0.6); flex: 1; }
 
 .live-indicator {
   display: flex;
@@ -335,62 +320,78 @@ ion-content {
   box-shadow: 0 0 8px #00ff88;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+.live-indicator span { font-size: 11px; font-weight: 700; color: #00ff88; letter-spacing: 0.5px; }
+
+.searching-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(0, 212, 255, 0.1);
+  border-radius: 12px;
 }
 
-.live-indicator span {
-  font-size: 11px;
-  font-weight: 700;
-  color: #00ff88;
-  letter-spacing: 0.5px;
+.searching-dots { display: flex; gap: 3px; align-items: center; }
+.dot {
+  width: 5px;
+  height: 5px;
+  background: #00d4ff;
+  border-radius: 50%;
+  animation: dot-blink 1.2s infinite;
 }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+.searching-indicator span { font-size: 11px; font-weight: 700; color: #00d4ff; letter-spacing: 0.5px; }
 
-/* 🔥 Indicador Offline */
 .offline-indicator {
   padding: 4px 10px;
   background: rgba(255, 100, 100, 0.1);
   border-radius: 12px;
 }
+.offline-indicator span { font-size: 11px; font-weight: 700; color: #ff6464; letter-spacing: 0.5px; }
 
-.offline-indicator span {
-  font-size: 11px;
-  font-weight: 700;
-  color: #ff6464;
-  letter-spacing: 0.5px;
+/* Searching Spinner */
+.searching-spinner { display: flex; align-items: center; justify-content: center; }
+.spinner-ring {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 /* Animations */
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes dot-blink {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

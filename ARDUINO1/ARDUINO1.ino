@@ -52,8 +52,8 @@ void readMPU() {
 }
 
 // ================= WiFi =================
-const char* WIFI_SSID = "daf adfad";
-const char* WIFI_PASSWORD = "1234567890";
+const char* WIFI_SSID = "A36D";
+const char* WIFI_PASSWORD = "12345678";
 
 // ================= Firebase =================
 const char* API_KEY = "AIzaSyCzbr7xVWPI__gHan0C0AuVcjm4EWJLSOw";

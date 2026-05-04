@@ -106,41 +106,38 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   fetchUV(lat: number, lon: number) {
-    const url = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}`;
+  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily,alerts&appid=${this.OPENWEATHER_KEY}&units=metric`;
 
-    this.http.get<any>(url).subscribe({
-      next: (data) => {
-        this.uvIndex = Math.round(data.value);
-        this.setUVLevel(this.uvIndex);
-        this.uvLoading = false;
+  this.http.get<any>(url).subscribe({
+    next: (data) => {
+      this.uvIndex = Math.round(data.current.uvi);
+      this.cityName = '';
+      this.setUVLevel(this.uvIndex);
+      this.uvLoading = false;
+      this.notificationService.checkUV(this.uvIndex, '');
 
-        const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
-        this.http.get<any>(cityUrl).subscribe({
-          next: (cityData) => {
-            this.cityName = cityData.name || '';
-            this.notificationService.checkUV(this.uvIndex, this.cityName);
-          },
-          error: () => {
-            this.cityName = '';
-            this.notificationService.checkUV(this.uvIndex, '');
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error UV:', err);
-        this.uvLevel = 'Error';
-        this.uvLoading = false;
-      }
-    });
-  }
+      // Nombre de ciudad aparte
+      const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
+      this.http.get<any>(cityUrl).subscribe({
+        next: (cityData) => this.cityName = cityData.name || ''
+      });
+    },
+    error: (err) => {
+      console.error('Error UV:', err);
+      this.uvLevel = 'Error';
+      this.uvLoading = false;
+    }
+  });
+}
 
-  setUVLevel(uvi: number) {
-    if (uvi <= 2) { this.uvLevel = 'Bajo'; this.uvColor = '#00c853'; }
-    else if (uvi <= 5) { this.uvLevel = 'Moderado'; this.uvColor = '#ffd600'; }
-    else if (uvi <= 7) { this.uvLevel = 'Alto'; this.uvColor = '#ff6d00'; }
-    else if (uvi <= 10) { this.uvLevel = 'Muy alto'; this.uvColor = '#dd2c00'; }
-    else { this.uvLevel = 'Extremo'; this.uvColor = '#aa00ff'; }
-  }
+setUVLevel(uvi: number) {
+  if (uvi === 0) { this.uvLevel = 'Noche'; this.uvColor = '#546e7a'; }
+  else if (uvi <= 2) { this.uvLevel = 'Bajo'; this.uvColor = '#00c853'; }
+  else if (uvi <= 5) { this.uvLevel = 'Moderado'; this.uvColor = '#ffd600'; }
+  else if (uvi <= 7) { this.uvLevel = 'Alto'; this.uvColor = '#ff6d00'; }
+  else if (uvi <= 10) { this.uvLevel = 'Muy alto'; this.uvColor = '#dd2c00'; }
+  else { this.uvLevel = 'Extremo'; this.uvColor = '#aa00ff'; }
+}
 
   get pesoDisplay(): string {
     if (!this.isConnected || this.peso === 0) return '0 g';
