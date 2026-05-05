@@ -32,3 +32,36 @@ ion-tab-button.tab-selected {
     color: #00d4ff;
   }
 }
+
+.tab-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-badge {
+  position: absolute;
+  top: -5px;
+  right: -9px;
+  background: linear-gradient(135deg, #ff6464, #ff4444);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.7);
+  border: 1.5px solid #0a1628;
+  line-height: 1;
+  animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}

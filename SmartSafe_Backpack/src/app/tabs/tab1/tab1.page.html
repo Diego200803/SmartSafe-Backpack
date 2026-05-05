@@ -109,6 +109,9 @@
 
     </div>
 
+    <!-- Alerta visual de temperatura -->
+    <app-temp-alert [temperatura]="temperatura" [isConnected]="isConnected"></app-temp-alert>
+
     <!-- Última Actualización -->
     <div class="last-update" [class.update-offline]="!isConnected">
       <ion-icon [name]="isConnected ? 'sync-outline' : 'close-circle-outline'"></ion-icon>

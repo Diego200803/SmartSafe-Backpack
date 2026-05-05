@@ -27,12 +27,15 @@ export class Tab1Page implements OnInit, OnDestroy {
   presion: number = 0;
   altitud: number = 0;
   peso: number = 0;
+  notebookExtraWeight: number = 0;
+  private notebookWeightSub: any;
 
   uvIndex: number = 0;
   uvLevel: string = 'Sin datos';
   uvColor: string = '#888';
   uvLoading: boolean = true;
   cityName: string = '';
+  private lastUVCache: { index: number; city: string } | null = null;
 
   isConnected: boolean = false;
   lastDataUpdate: number = 0;
@@ -64,11 +67,15 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.startMonitoring();
     this.loadUVIndex();
     this.uvInterval = setInterval(() => this.loadUVIndex(), 10 * 60 * 1000);
+    this.notebookWeightSub = this.firebaseService.notebookExtraWeight.subscribe(w => {
+      this.notebookExtraWeight = w;
+    });
   }
 
   ngOnDestroy() {
     if (this.monitoringInterval) clearInterval(this.monitoringInterval);
     if (this.uvInterval) clearInterval(this.uvInterval);
+    if (this.notebookWeightSub) this.notebookWeightSub.unsubscribe();
   }
 
   // ── UV ──────────────────────────────────────────────
@@ -78,7 +85,10 @@ export class Tab1Page implements OnInit, OnDestroy {
     if (Capacitor.isNativePlatform()) {
       Geolocation.requestPermissions().then(result => {
         if (result.location === 'granted' || result.coarseLocation === 'granted') {
-          Geolocation.getCurrentPosition({ timeout: 8000 }).then(pos => {
+          Geolocation.getCurrentPosition({
+            timeout: 15000,
+            enableHighAccuracy: true
+          }).then(pos => {
             this.fetchUV(pos.coords.latitude, pos.coords.longitude);
           }).catch(() => {
             this.fetchUV(-2.9001, -79.0059);
@@ -100,35 +110,53 @@ export class Tab1Page implements OnInit, OnDestroy {
           console.warn('Geolocalización denegada, usando Cuenca EC por defecto');
           this.fetchUV(-2.9001, -79.0059);
         },
-        { timeout: 8000 }
+        { timeout: 15000, enableHighAccuracy: true, maximumAge: 0 }
       );
     }
   }
 
+  private isNighttime(): boolean {
+    const h = new Date().getHours();
+    return h >= 19 || h < 6;
+  }
+
   fetchUV(lat: number, lon: number) {
-  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily,alerts&appid=${this.OPENWEATHER_KEY}&units=metric`;
+    const uvUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily,alerts&appid=${this.OPENWEATHER_KEY}&units=metric`;
+    // Nominatim devuelve address.city (ej: "Cuenca") en lugar del barrio (ej: "Miraflores")
+    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
 
-  this.http.get<any>(url).subscribe({
-    next: (data) => {
-      this.uvIndex = Math.round(data.current.uvi);
-      this.cityName = '';
-      this.setUVLevel(this.uvIndex);
-      this.uvLoading = false;
-      this.notificationService.checkUV(this.uvIndex, '');
+    this.http.get<any>(nominatimUrl).subscribe({
+      next: (geo) => {
+        this.cityName = geo.address?.city || geo.address?.town || geo.address?.village || '';
+      },
+      error: () => {
+        if (this.lastUVCache) this.cityName = this.lastUVCache.city;
+      }
+    });
 
-      // Nombre de ciudad aparte
-      const cityUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.OPENWEATHER_KEY}&units=metric`;
-      this.http.get<any>(cityUrl).subscribe({
-        next: (cityData) => this.cityName = cityData.name || ''
-      });
-    },
-    error: (err) => {
-      console.error('Error UV:', err);
-      this.uvLevel = 'Error';
-      this.uvLoading = false;
-    }
-  });
-}
+    this.http.get<any>(uvUrl).subscribe({
+      next: (data) => {
+        this.uvIndex = Math.round(data.current?.uvi ?? 0);
+        this.setUVLevel(this.uvIndex);
+        this.uvLoading = false;
+        this.lastUVCache = { index: this.uvIndex, city: this.cityName };
+        this.notificationService.checkUV(this.uvIndex, this.cityName);
+      },
+      error: () => {
+        this.uvLoading = false;
+        if (this.isNighttime()) {
+          this.uvIndex = 0;
+          this.setUVLevel(0);
+        } else if (this.lastUVCache) {
+          this.uvIndex = this.lastUVCache.index;
+          this.cityName = this.lastUVCache.city;
+          this.setUVLevel(this.uvIndex);
+        } else {
+          this.uvLevel = 'Sin datos';
+        }
+      }
+    });
+  }
 
 setUVLevel(uvi: number) {
   if (uvi === 0) { this.uvLevel = 'Noche'; this.uvColor = '#546e7a'; }
@@ -140,9 +168,11 @@ setUVLevel(uvi: number) {
 }
 
   get pesoDisplay(): string {
-    if (!this.isConnected || this.peso === 0) return '0 g';
-    if (this.peso >= 1000) return (this.peso / 1000).toFixed(1).replace('.', ',') + ' kg';
-    return Math.round(this.peso) + ' g';
+    const sensorPeso = this.isConnected ? this.peso : 0;
+    const total = sensorPeso + this.notebookExtraWeight;
+    if (total === 0) return '0 g';
+    if (total >= 1000) return (total / 1000).toFixed(1).replace('.', ',') + ' kg';
+    return Math.round(total) + ' g';
   }
 
   initializeFirebaseListeners() {
@@ -199,7 +229,6 @@ setUVLevel(uvi: number) {
     this.consecutiveSuccess++;
     this.addToHistory(true);
     if (source !== 'heartbeat') console.log('📡', source + ':', value);
-    if (source === 'temperatura') this.notificationService.checkTemperatura(value);
   }
 
   startMonitoring() {

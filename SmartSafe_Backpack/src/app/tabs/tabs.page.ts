@@ -1,6 +1,8 @@
 import { Component, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { IonTabs } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { NotificationService } from '../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tabs',
@@ -14,6 +16,7 @@ export class TabsPage implements AfterViewInit, OnDestroy {
 
   private readonly tabOrder = ['tab1', 'tab5', 'tab2', 'tab3', 'tab4'];
   private currentTab: string = 'tab1';
+  notifBadge = 0;
 
   private startX = 0;
   private startY = 0;
@@ -23,15 +26,20 @@ export class TabsPage implements AfterViewInit, OnDestroy {
   private boundStart = this.onStart.bind(this);
   private boundMove = this.onMove.bind(this);
   private boundEnd = this.onEnd.bind(this);
+  private badgeSub: Subscription = new Subscription();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private notificationService: NotificationService) {}
 
   ngAfterViewInit() {
     setTimeout(() => this.attachListeners(), 800);
+    this.badgeSub = this.notificationService.unreadCount.subscribe(c => {
+      this.notifBadge = c;
+    });
   }
 
   ngOnDestroy() {
     this.detachListeners();
+    this.badgeSub.unsubscribe();
   }
 
   onTabChange(event: any) {

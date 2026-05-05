@@ -427,7 +427,9 @@ ion-content {
 .color-btn { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
 .color-btn.selected { border-color: white; transform: scale(1.2); }
 
-.uid-section { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.uid-section { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.uid-buttons { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-clear-uid { --color: var(--ion-color-danger); --border-color: rgba(var(--ion-color-danger-rgb), 0.4); }
 .uid-display {
   flex: 1; display: flex; align-items: center; gap: 8px;
   background: rgba(255,255,255,0.04);

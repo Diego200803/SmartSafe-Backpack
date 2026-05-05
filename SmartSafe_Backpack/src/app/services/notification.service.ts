@@ -14,6 +14,7 @@ export interface AppNotification {
   badgeClass: string;
   timestamp: Date;
   timeText: string;
+  read: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +22,9 @@ export class NotificationService {
 
   private notifications$ = new BehaviorSubject<AppNotification[]>([]);
   notifications = this.notifications$.asObservable();
+
+  private unreadCount$ = new BehaviorSubject<number>(0);
+  unreadCount = this.unreadCount$.asObservable();
 
   private readonly COOLDOWN = 5 * 60 * 1000;
   private lastSent: { [key: string]: number } = {};
@@ -52,19 +56,32 @@ export class NotificationService {
     return false;
   }
 
-  private async add(notif: Omit<AppNotification, 'id' | 'timestamp' | 'timeText'>) {
+  private async add(notif: Omit<AppNotification, 'id' | 'timestamp' | 'timeText' | 'read'>) {
     const id = Date.now().toString();
     const newNotif: AppNotification = {
       ...notif,
       id,
       timestamp: new Date(),
-      timeText: 'Ahora mismo'
+      timeText: 'Ahora mismo',
+      read: false
     };
 
     const current = this.notifications$.getValue();
     this.notifications$.next([newNotif, ...current]);
+    this.unreadCount$.next(this.unreadCount$.getValue() + 1);
 
     await this.sendSystemNotification(notif.title, notif.message);
+  }
+
+  clearUnread() {
+    const current = this.notifications$.getValue();
+    this.notifications$.next(current.map(n => ({ ...n, read: true })));
+    this.unreadCount$.next(0);
+  }
+
+  clearAll() {
+    this.notifications$.next([]);
+    this.unreadCount$.next(0);
   }
 
   private async sendSystemNotification(title: string, body: string) {
@@ -113,43 +130,6 @@ export class NotificationService {
     if (diff < 60) return 'Hace ' + diff + ' seg';
     if (diff < 3600) return 'Hace ' + Math.floor(diff / 60) + ' min';
     return 'Hace ' + Math.floor(diff / 3600) + ' h';
-  }
-
-  // ── TEMPERATURA ──────────────────────────────────────
-  checkTemperatura(temp: number) {
-    if (temp <= 0) return;
-
-    if (temp >= 35 && this.canSend('temp_alta')) {
-      this.add({
-        type: 'alert',
-        icon: 'thermometer',
-        iconClass: 'temperature-icon',
-        title: 'Temperatura muy alta',
-        message: `Temperatura actual: ${temp.toFixed(1)}°C. Se recomienda ropa ligera y mantenerse hidratado.`,
-        badge: 'Alerta',
-        badgeClass: 'alert-badge'
-      });
-    } else if (temp >= 28 && temp < 35 && this.canSend('temp_calor')) {
-      this.add({
-        type: 'warning',
-        icon: 'thermometer',
-        iconClass: 'temperature-icon',
-        title: 'Temperatura elevada',
-        message: `Temperatura actual: ${temp.toFixed(1)}°C. Se recomienda ropa fresca y llevar agua.`,
-        badge: 'Importante',
-        badgeClass: ''
-      });
-    } else if (temp <= 10 && this.canSend('temp_frio')) {
-      this.add({
-        type: 'info',
-        icon: 'snow',
-        iconClass: 'gps-icon',
-        title: 'Temperatura baja',
-        message: `Temperatura actual: ${temp.toFixed(1)}°C. Se recomienda llevar ropa abrigada.`,
-        badge: 'Info',
-        badgeClass: 'info-badge'
-      });
-    }
   }
 
   // ── UV ────────────────────────────────────────────────

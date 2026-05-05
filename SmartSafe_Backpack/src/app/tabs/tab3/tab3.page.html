@@ -362,11 +362,19 @@
           <ion-icon [name]="materiaTemp.uid ? 'card' : 'card-outline'"></ion-icon>
           <span>{{ materiaTemp.uid || 'Sin tarjeta registrada' }}</span>
         </div>
-        <ion-button fill="outline" size="small" class="btn-scan"
-                    (click)="iniciarEscaneoUID()" [disabled]="escuchandoUID">
-          <ion-icon [name]="escuchandoUID ? 'radio-outline' : 'scan-outline'" slot="start"></ion-icon>
-          {{ escuchandoUID ? 'Esperando...' : 'Escanear' }}
-        </ion-button>
+        <div class="uid-buttons">
+          <ion-button fill="outline" size="small" class="btn-scan"
+                      (click)="iniciarEscaneoUID()" [disabled]="escuchandoUID">
+            <ion-icon [name]="escuchandoUID ? 'radio-outline' : 'scan-outline'" slot="start"></ion-icon>
+            {{ escuchandoUID ? 'Esperando...' : 'Escanear' }}
+          </ion-button>
+          <ion-button fill="outline" size="small" color="danger" class="btn-clear-uid"
+                      *ngIf="materiaTemp.uid && !escuchandoUID"
+                      (click)="borrarUID()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Borrar
+          </ion-button>
+        </div>
       </div>
       <p class="uid-hint" *ngIf="escuchandoUID">
         <ion-icon name="radio-outline" class="blink-icon"></ion-icon>

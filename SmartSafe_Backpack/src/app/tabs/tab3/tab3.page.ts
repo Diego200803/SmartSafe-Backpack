@@ -64,6 +64,7 @@ export class Tab3Page implements OnInit, OnDestroy {
   cuadernosIngresados: string[] = [];
   mensajeEstado: string = '';
   ultimoIngresado: string = '';
+  private currentDayKey: string = '';
 
   horarioData: HorarioData = {
     dias: [], slots: [], grid: {}, materias: [], guardado: false
@@ -455,8 +456,30 @@ onTouchEnd(event: TouchEvent) {
     });
   }
 
-  guardarMateria() {
+  borrarUID() {
+    this.materiaTemp.uid = '';
+    this.escuchandoUID = false;
+    if (this.uidListener) { this.uidListener(); this.uidListener = null; }
+  }
+
+  async guardarMateria() {
     if (!this.materiaTemp.nombre.trim()) return;
+
+    if (this.materiaTemp.uid) {
+      const duplicado = this.horarioData.materias.find(
+        m => m.uid.toLowerCase() === this.materiaTemp.uid.toLowerCase() && m.id !== this.materiaTemp.id
+      );
+      if (duplicado) {
+        const alert = await this.alertController.create({
+          header: 'Tarjeta ya registrada',
+          message: `Esta tarjeta ya está asignada a "${duplicado.nombre}". Borra el UID y escanea una tarjeta diferente.`,
+          buttons: ['Entendido']
+        });
+        await alert.present();
+        return;
+      }
+    }
+
     const idx = this.horarioData.materias.findIndex(m => m.id === this.materiaTemp.id);
     if (idx >= 0) {
       this.horarioData.materias[idx] = { ...this.materiaTemp };
@@ -539,6 +562,8 @@ onTouchEnd(event: TouchEvent) {
   cargarCuadernosGuardados() {
     const saved = localStorage.getItem('cuadernos_' + this.getDiaKey());
     this.cuadernosIngresados = saved ? JSON.parse(saved) : [];
+    this.firebaseService.resetNotebookWeight();
+    this.cuadernosIngresados.forEach(() => this.firebaseService.addNotebookWeight());
     this.actualizarMensaje();
   }
 
@@ -556,6 +581,7 @@ onTouchEnd(event: TouchEvent) {
     this.ultimoIngresado = '';
     this.guardarCuadernos();
     this.actualizarMensaje();
+    this.firebaseService.resetNotebookWeight();
   }
 
   actualizarMensaje() {
@@ -594,6 +620,7 @@ onTouchEnd(event: TouchEvent) {
               this.guardarCuadernos();
               this.ultimoIngresado = `Cuaderno de ${materia.nombre} ingresado`;
               this.actualizarMensaje();
+              this.firebaseService.addNotebookWeight();
               setTimeout(() => { this.ultimoIngresado = ''; }, 3000);
             }
           });
@@ -606,6 +633,12 @@ onTouchEnd(event: TouchEvent) {
     this.monitoringInterval = setInterval(() => {
       this.checkConnectionStatus();
       this.updateLastUpdateText();
+      const newKey = this.getDiaKey();
+      if (newKey !== this.currentDayKey) {
+        this.currentDayKey = newKey;
+        this.detectarDia();
+        this.cargarCuadernosGuardados();
+      }
     }, 1000);
   }
 
@@ -626,7 +659,7 @@ onTouchEnd(event: TouchEvent) {
   }
 
   updateLastUpdateText() {
-    if (!this.isConnected) { this.lastUpdateText = 'ESP32 desconectado'; return; }
+    if (!this.isConnected) { this.lastUpdateText = 'Mochila desconectada'; return; }
     if (this.lastDataUpdate === 0) { this.lastUpdateText = 'Esperando...'; return; }
     const diff = Math.floor((Date.now() - this.lastDataUpdate) / 1000);
     if (diff < 2) this.lastUpdateText = 'ahora mismo';
@@ -637,6 +670,7 @@ onTouchEnd(event: TouchEvent) {
   detectarDia() {
     const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     this.diaHoy = dias[new Date().getDay()];
+    this.currentDayKey = this.getDiaKey();
     this.actualizarMensaje();
   }
 

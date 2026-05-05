@@ -22,7 +22,10 @@
     </ion-tab-button>
 
     <ion-tab-button tab="tab4">
-      <ion-icon name="notifications"></ion-icon>
+      <div class="tab-icon-wrapper">
+        <ion-icon name="notifications"></ion-icon>
+        <span class="tab-badge" *ngIf="notifBadge > 0">{{ notifBadge > 9 ? '9+' : notifBadge }}</span>
+      </div>
       <ion-label>Alertas</ion-label>
     </ion-tab-button>
 

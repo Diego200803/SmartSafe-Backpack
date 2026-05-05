@@ -1,0 +1,14 @@
+<div class="temp-alert-container"
+     *ngIf="alert"
+     [style.border-color]="alert.borderColor"
+     [style.background]="alert.bgColor">
+  <div class="temp-alert-header">
+    <div class="temp-alert-icon" [style.color]="alert.color">
+      <ion-icon [name]="alert.icon"></ion-icon>
+    </div>
+    <span class="temp-alert-title" [style.color]="alert.color">{{ alert.title }}</span>
+  </div>
+  <ul class="temp-alert-recs">
+    <li *ngFor="let rec of alert.recs">{{ rec }}</li>
+  </ul>
+</div>

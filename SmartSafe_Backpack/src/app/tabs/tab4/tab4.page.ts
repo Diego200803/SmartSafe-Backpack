@@ -17,6 +17,7 @@ export class Tab4Page implements OnInit, OnDestroy {
   userFullName: string = 'Usuario';
   userEmail: string = '';
   notifications: AppNotification[] = [];
+  activeFilter: 'all' | 'alert' | 'warning' | 'info' | 'success' = 'all';
 
   private sub: Subscription = new Subscription();
   private timeInterval: any;
@@ -36,15 +37,52 @@ export class Tab4Page implements OnInit, OnDestroy {
       this.notifications = notifs;
     });
 
-    // Actualizar textos de tiempo cada minuto
     this.timeInterval = setInterval(() => {
       this.notificationService.updateTimeTexts();
     }, 60000);
   }
 
+  ionViewWillEnter() {
+    this.notificationService.clearUnread();
+  }
+
   ngOnDestroy() {
     this.sub.unsubscribe();
     if (this.timeInterval) clearInterval(this.timeInterval);
+  }
+
+  get filteredNotifications(): AppNotification[] {
+    if (this.activeFilter === 'all') return this.notifications;
+    return this.notifications.filter(n => n.type === this.activeFilter);
+  }
+
+  setFilter(filter: typeof this.activeFilter) {
+    this.activeFilter = filter;
+  }
+
+  countByType(type: string): number {
+    return this.notifications.filter(n => n.type === type).length;
+  }
+
+  async clearAll() {
+    if (this.notifications.length === 0) return;
+    const alert = await this.alertController.create({
+      header: 'Borrar todo',
+      message: '¿Eliminar todas las notificaciones?',
+      cssClass: 'custom-alert',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Borrar todo',
+          cssClass: 'danger-btn',
+          handler: () => {
+            this.activeFilter = 'all';
+            this.notificationService.clearAll();
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   deleteNotification(id: string, element: HTMLElement) {

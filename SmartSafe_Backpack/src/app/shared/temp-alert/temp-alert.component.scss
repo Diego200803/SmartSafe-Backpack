@@ -1,0 +1,54 @@
+.temp-alert-container {
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.temp-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.temp-alert-icon {
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.temp-alert-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.temp-alert-recs {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+
+  li {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -17,25 +17,76 @@
       <p class="subtitle">Alertas y recomendaciones inteligentes</p>
     </div>
 
-    <div class="section-title">
-      <ion-icon name="notifications"></ion-icon>
-      <h3>Notificaciones Recientes</h3>
-      <span class="notif-count" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
+    <div class="section-header">
+      <div class="section-title">
+        <ion-icon name="notifications"></ion-icon>
+        <h3>Notificaciones Recientes</h3>
+        <span class="notif-count" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
+      </div>
+      <button class="clear-btn" *ngIf="notifications.length > 0" (click)="clearAll()">
+        <ion-icon name="trash-outline"></ion-icon>
+        Borrar todo
+      </button>
     </div>
 
-    <!-- Sin notificaciones -->
+    <!-- Chips de filtro -->
+    <div class="filter-row" *ngIf="notifications.length > 0">
+      <button class="filter-chip"
+              [class.active]="activeFilter === 'all'"
+              (click)="setFilter('all')">
+        Todos <span class="chip-count">{{ notifications.length }}</span>
+      </button>
+      <button class="filter-chip chip-alert"
+              [class.active]="activeFilter === 'alert'"
+              (click)="setFilter('alert')"
+              *ngIf="countByType('alert') > 0">
+        <ion-icon name="warning-outline"></ion-icon>
+        Alertas <span class="chip-count">{{ countByType('alert') }}</span>
+      </button>
+      <button class="filter-chip chip-warning"
+              [class.active]="activeFilter === 'warning'"
+              (click)="setFilter('warning')"
+              *ngIf="countByType('warning') > 0">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        Avisos <span class="chip-count">{{ countByType('warning') }}</span>
+      </button>
+      <button class="filter-chip chip-info"
+              [class.active]="activeFilter === 'info'"
+              (click)="setFilter('info')"
+              *ngIf="countByType('info') > 0">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        Info <span class="chip-count">{{ countByType('info') }}</span>
+      </button>
+      <button class="filter-chip chip-success"
+              [class.active]="activeFilter === 'success'"
+              (click)="setFilter('success')"
+              *ngIf="countByType('success') > 0">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        OK <span class="chip-count">{{ countByType('success') }}</span>
+      </button>
+    </div>
+
+    <!-- Sin notificaciones globales -->
     <div class="empty-state" *ngIf="notifications.length === 0">
       <ion-icon name="notifications-off-outline"></ion-icon>
       <p>Sin notificaciones por ahora</p>
       <span>Las alertas aparecerán aquí automáticamente</span>
     </div>
 
+    <!-- Sin resultados para el filtro activo -->
+    <div class="empty-state empty-filter" *ngIf="notifications.length > 0 && filteredNotifications.length === 0">
+      <ion-icon name="funnel-outline"></ion-icon>
+      <p>Sin notificaciones aquí</p>
+      <span>Prueba seleccionando otro filtro</span>
+    </div>
+
     <!-- Lista dinámica -->
-    <ion-list class="notifications-list" *ngIf="notifications.length > 0">
-      <ion-item-sliding *ngFor="let notif of notifications" [attr.data-id]="notif.id" #slidingItem>
+    <ion-list class="notifications-list" *ngIf="filteredNotifications.length > 0">
+      <ion-item-sliding *ngFor="let notif of filteredNotifications" [attr.data-id]="notif.id" #slidingItem>
 
         <ion-item lines="none" class="notification-item">
           <div class="notification-card" [ngClass]="notif.type">
+            <span class="unread-dot" *ngIf="!notif.read"></span>
             <div class="notification-icon" [ngClass]="notif.iconClass">
               <ion-icon [name]="notif.icon"></ion-icon>
             </div>

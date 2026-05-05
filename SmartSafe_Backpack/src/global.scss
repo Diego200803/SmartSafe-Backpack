@@ -154,3 +154,32 @@ app-profile-popover .logout-content span {
   font-weight: 600;
   color: #ff6464;
 }
+
+/* Alert personalizado - tema oscuro */
+.custom-alert {
+  --background: #0f1b2e;
+  --backdrop-opacity: 0.7;
+
+  .alert-wrapper {
+    background: #0f1b2e;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 20px;
+  }
+  .alert-title {
+    color: white;
+    font-weight: 700;
+  }
+  .alert-message {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .alert-button-group {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .alert-button {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .danger-btn {
+    color: #ff6464 !important;
+    font-weight: 700;
+  }
+}

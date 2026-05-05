@@ -9,13 +9,25 @@ import {
   updateProfile
 } from '@angular/fire/auth';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Firestore, doc, setDoc, getDoc, collection } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseService {
+
+  private readonly NOTEBOOK_WEIGHT_G = 300;
+  private notebookWeight$ = new BehaviorSubject<number>(0);
+  readonly notebookExtraWeight = this.notebookWeight$.asObservable();
+
+  addNotebookWeight() {
+    this.notebookWeight$.next(this.notebookWeight$.getValue() + this.NOTEBOOK_WEIGHT_G);
+  }
+
+  resetNotebookWeight() {
+    this.notebookWeight$.next(0);
+  }
 
   constructor(
     private auth: Auth,
